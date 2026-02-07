@@ -11,5 +11,5 @@
 2. **함수 생성**: Code.gs에 `fetch{Platform}Data()` 함수 추가 (기존 fetchGoogleAdsData 패턴 준수)
 3. **Config 업데이트**: Config.gs의 CONFIG.api 객체에 새 플랫폼 설정 추가
 4. **main() 수정**: main() 함수에 새 플랫폼 데이터 수집 단계 추가
-5. **문서 업데이트**: claude.md에 새 API 정보 추가
+5. **문서 업데이트**: CLAUDE.md, README.md에 새 API 정보 추가
 6. **검증**: /validate-code 실행

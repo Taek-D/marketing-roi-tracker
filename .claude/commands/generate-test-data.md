@@ -6,7 +6,7 @@
 
 1. **데이터 생성**: Raw Data 스키마에 맞는 테스트 데이터 생성
    - date: 최근 30일
-   - channel: "Google Ads", "Facebook Ads"
+   - channel: "Google Ads", "Facebook Ads", "Naver Search Ads"
    - campaign: 채널별 2-3개 캠페인명
    - cost: $50~$500 랜덤
    - impressions: 1,000~50,000

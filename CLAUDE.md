@@ -7,7 +7,7 @@ Google Ads / Facebook Ads / Naver Search Ads 데이터를 수집하여 Google Sh
 ## Tech Stack
 - **Language**: Google Apps Script (JavaScript ES6 기반)
 - **Runtime**: Google Apps Script (clasp로 로컬 개발 가능)
-- **APIs**: Google Ads API v15, Facebook Marketing API v18, Naver Search Ads API
+- **APIs**: Google Ads API v18, Facebook Marketing API v21, Naver Search Ads API
 - **Frontend**: Google Sheets (Dashboard)
 - **Notifications**: Slack Webhook
 
@@ -20,6 +20,7 @@ Setup.gs         # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
 CLAUDE.md        # 프로젝트 개발 규칙 (이 파일)
 PRD.md           # 제품 요구사항 문서
 ```
+> 전체 프로젝트 구조는 README.md 참조
 
 ## Coding Conventions
 
@@ -71,5 +72,5 @@ Row index: 0=date, 1=channel, 2=campaign, 3=cost, 4=impressions, 5=clicks, 6=con
 - `CLAUDE.md` - 프로젝트 개발 규칙 (이 파일)
 - `PRD.md` - 상세 제품 요구사항 및 UI 레이아웃
 - `auth_setup_instructions.md` - OAuth/토큰 설정 가이드
-- `CHANGELOG.md` - 변경 이력
+- `README.md` - 팀 온보딩 가이드 및 전체 프로젝트 구조
 - `naver_setup_guide.md` - 네이버 검색광고 API 연동 가이드

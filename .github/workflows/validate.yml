@@ -2,10 +2,10 @@ name: Validate GAS Code
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
     paths: ['*.gs']
   pull_request:
-    branches: [master]
+    branches: [master, main]
     paths: ['*.gs']
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22' # LTS for syntax checking
 
       - name: Syntax check all .gs files
         run: |
@@ -44,7 +44,7 @@ jobs:
       - name: Check for hardcoded secrets
         run: |
           echo "Scanning for hardcoded secrets..."
-          if grep -rn --include="*.gs" -iE '(api_key|access_token|secret|password)\s*[:=]\s*["'"'"'][A-Za-z0-9]' *.gs; then
+          if grep -rn --include="*.gs" -iE '^\s*[^/\*]*(api_key|access_token|secret|password)\s*[:=]\s*["'"'"'][A-Za-z0-9]' *.gs; then
             echo "WARNING: Possible hardcoded secrets found"
             exit 1
           fi

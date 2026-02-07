@@ -94,10 +94,10 @@ function setupDashboardLayout(sheet) {
 
   // Formulas pulling from Attribution sheet
   const attrName = CONFIG.sheetNames.attribution;
-  sheet.getRange('A5').setFormula("=IFERROR(SUM('" + attrName + "'!B2:B100), 0)").setNumberFormat('$#,##0');
-  sheet.getRange('B5').setFormula("=IFERROR(SUM('" + attrName + "'!C2:C100), 0)").setNumberFormat('$#,##0');
+  sheet.getRange('A5').setFormula("=IFERROR(SUM('" + attrName + "'!B2:B), 0)").setNumberFormat('$#,##0');
+  sheet.getRange('B5').setFormula("=IFERROR(SUM('" + attrName + "'!C2:C), 0)").setNumberFormat('$#,##0');
   sheet.getRange('C5').setFormula("=IFERROR(B5/A5, 0)").setNumberFormat('0.00');
-  sheet.getRange('D5').setFormula("=IFERROR(SUM('" + CONFIG.sheetNames.rawData + "'!G2:G10000), 0)").setNumberFormat('#,##0');
+  sheet.getRange('D5').setFormula("=IFERROR(SUM('" + CONFIG.sheetNames.rawData + "'!G2:G), 0)").setNumberFormat('#,##0');
 
   // Summary card styling
   sheet.getRange('A5:D5').setFontSize(14).setFontWeight('bold').setHorizontalAlignment('center');
@@ -110,7 +110,7 @@ function setupDashboardLayout(sheet) {
   sheet.getRange('C8').setValue('Revenue').setFontWeight('bold').setBackground('#FBBC04');
   sheet.getRange('D8').setValue('ROAS').setFontWeight('bold').setBackground('#FBBC04');
 
-  // Formulas for channel breakdown
+  // Channel breakdown: hardcoded for 3 channels. Update formulas if adding more channels.
   sheet.getRange('A9').setFormula("=IFERROR('" + attrName + "'!A2, \"\")");
   sheet.getRange('B9').setFormula("=IFERROR('" + attrName + "'!B2, \"\")").setNumberFormat('$#,##0');
   sheet.getRange('C9').setFormula("=IFERROR('" + attrName + "'!C2, \"\")").setNumberFormat('$#,##0');
@@ -197,6 +197,7 @@ function insertTestData() {
 
     for (const channel in campaigns) {
       campaigns[channel].forEach(function(campaign) {
+        // All test data uses normalized USD values for cross-channel comparison
         const cost = Math.round((Math.random() * 450 + 50) * 100) / 100;
         const impressions = Math.floor(Math.random() * 49000 + 1000);
         const ctr = Math.random() * 0.04 + 0.01;

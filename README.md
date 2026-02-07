@@ -97,7 +97,7 @@ marketing-roi-tracker/
 │   └── validate.yml        # CI: 구문 검사 + 시크릿 스캔
 ├── .mcp.json               # MCP 서버 설정
 ├── PRD.md                  # 제품 요구사항 문서
-├── claude.md               # 프로젝트 블루프린트 (API 스펙)
+├── blueprint.md            # 프로젝트 블루프린트 (API 스펙)
 ├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
 └── naver_setup_guide.md    # 네이버 검색광고 API 연동 가이드
 ```
@@ -197,8 +197,8 @@ clasp open
 ## Tech Stack
 
 - **Google Apps Script** (JavaScript ES6)
-- **Google Ads API** v15
-- **Facebook Marketing API** v18
+- **Google Ads API** v18
+- **Facebook Marketing API** v21
 - **Naver Search Ads API**
 - **Google Sheets** (Dashboard)
 - **Slack Webhook** (알림)

@@ -36,7 +36,7 @@ for (let attempt = 1; attempt <= CONFIG.api.{platform}.maxRetries; attempt++) {
 ### Script Properties 접근
 ```javascript
 const value = getProperty('KEY_NAME');  // 항상 래퍼 사용
-// 직접 호출 금지: PropertiesService.getScriptProperties().getProperty()
+// 애플리케이션 코드에서 직접 호출 금지 (getProperty() 래퍼 내부에서만 허용)
 ```
 
 ### 시트 null 체크

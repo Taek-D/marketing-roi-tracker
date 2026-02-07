@@ -9,6 +9,9 @@ function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('MarketingROI Tracker')
       .addItem('Refresh Data', 'main')
+      .addSeparator()
+      .addItem('Run Setup', 'setupAll')
+      .addItem('Recalculate Attribution', 'calculateAttribution')
       .addToUi();
 }
 
@@ -17,7 +20,9 @@ function onOpen() {
  */
 function main() {
   try {
-    const rawDataSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.sheetNames.rawData);
+    CONFIG.startTime = Date.now();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const rawDataSheet = ss.getSheetByName(CONFIG.sheetNames.rawData);
     if (!rawDataSheet) {
       throw new Error('Raw Data sheet not found');
     }
@@ -29,22 +34,31 @@ function main() {
     }
 
     // 2. Fetch Facebook Ads Data
-    const fbAdsData = fetchFacebookAdsData();
-    if (fbAdsData && fbAdsData.length > 0) {
-      appendDataToSheet(rawDataSheet, fbAdsData);
+    if (isTimeLimitNear()) { log('Time limit near, skipping remaining fetches'); }
+    else {
+      const fbAdsData = fetchFacebookAdsData();
+      if (fbAdsData && fbAdsData.length > 0) {
+        appendDataToSheet(rawDataSheet, fbAdsData);
+      }
     }
 
     // 3. Fetch Naver Search Ads Data
-    const naverAdsData = fetchNaverSearchAdsData();
-    if (naverAdsData && naverAdsData.length > 0) {
-      appendDataToSheet(rawDataSheet, naverAdsData);
+    if (isTimeLimitNear()) { log('Time limit near, skipping remaining fetches'); }
+    else {
+      const naverAdsData = fetchNaverSearchAdsData();
+      if (naverAdsData && naverAdsData.length > 0) {
+        appendDataToSheet(rawDataSheet, naverAdsData);
+      }
     }
 
-    // 4. Run Attribution Logic
-    calculateAttribution();
+    // 4. Prune old data (keep 90 days)
+    pruneOldData(ss);
 
-    // 5. Update Dashboard
-    updateDashboard();
+    // 5. Run Attribution Logic
+    calculateAttribution(ss);
+
+    // 6. Update Dashboard
+    updateDashboard(ss);
 
   } catch (e) {
     log('Error in main: ' + e.message);
@@ -69,8 +83,10 @@ function fetchGoogleAdsData() {
       // Real implementation would use UrlFetchApp with OAuth token
       // GAQL Query: SELECT segments.date, metrics.cost_micros, metrics.impressions ...
 
-      log('Fetching Google Ads data for customer: ' + customerId);
-      return []; // Return empty for now as we don't have real creds
+      // TODO: Implement real Google Ads API call with GAQL query
+      // GAQL: SELECT segments.date, metrics.cost_micros, metrics.impressions, ...
+      log('Google Ads: placeholder mode (no real API call)');
+      return [];
     } catch (e) {
       log('Google Ads fetch attempt ' + attempt + ' failed: ' + e.message);
       if (attempt === CONFIG.api.googleAds.maxRetries) {
@@ -101,7 +117,9 @@ function fetchFacebookAdsData() {
       // Real implementation would use UrlFetchApp
       // Graph API: /act_{id}/insights?fields=...
 
-      log('Fetching FB Ads data for account: ' + accountId);
+      // TODO: Implement real Facebook Marketing API call
+      // Graph API: /act_{id}/insights?fields=spend,impressions,clicks,...
+      log('FB Ads: placeholder mode (no real API call)');
       return [];
     } catch (e) {
       log('FB Ads fetch attempt ' + attempt + ' failed: ' + e.message);
@@ -139,6 +157,7 @@ function fetchNaverSearchAdsData() {
       const path = '/ncc/stats';
       const signature = generateNaverSignature(timestamp, method, path, secretKey);
 
+      // encodeURIComponent required for JSON values in URL query parameters
       const fields = encodeURIComponent('["impCnt","clkCnt","salesAmt","ccnt","convAmt"]');
       const timeRange = encodeURIComponent('{"since":"' + getYesterday() + '","until":"' + getYesterday() + '"}');
       const url = CONFIG.api.naverAds.baseUrl + path +
@@ -162,7 +181,15 @@ function fetchNaverSearchAdsData() {
         throw new Error('Naver API returned ' + code + ': ' + response.getContentText());
       }
 
-      const data = JSON.parse(response.getContentText());
+      let data;
+      try {
+        data = JSON.parse(response.getContentText());
+      } catch (parseErr) {
+        throw new Error('Invalid JSON from Naver API: ' + parseErr.message);
+      }
+      if (!Array.isArray(data)) {
+        throw new Error('Naver API response is not an array');
+      }
       log('Fetching Naver Ads data: ' + data.length + ' rows');
       return parseNaverAdsResponse(data);
     } catch (e) {
@@ -205,7 +232,7 @@ function parseNaverAdsResponse(data) {
       dateStr,
       'Naver Search Ads',
       item.campaignName || 'Unknown',
-      item.salesAmt || 0,
+      item.salesAmt || 0,   // salesAmt = ad spend (Naver naming convention)
       item.impCnt || 0,
       item.clkCnt || 0,
       item.ccnt || 0,
@@ -233,9 +260,15 @@ function getYesterday() {
  */
 function appendDataToSheet(sheet, data) {
   if (!data || data.length === 0) return;
+  const expectedCols = 8;
+  const validData = data.filter(function(row) { return Array.isArray(row) && row.length === expectedCols; });
+  if (validData.length !== data.length) {
+    log('Warning: ' + (data.length - validData.length) + ' rows had invalid column count, skipped');
+  }
+  if (validData.length === 0) return;
   const lastRow = sheet.getLastRow();
-  sheet.getRange(lastRow + 1, 1, data.length, data[0].length).setValues(data);
-  log('Appended ' + data.length + ' rows');
+  sheet.getRange(lastRow + 1, 1, validData.length, expectedCols).setValues(validData);
+  log('Appended ' + validData.length + ' rows');
 }
 
 /**
@@ -247,8 +280,9 @@ function notifySlack(message) {
   if (!webhookUrl) return;
 
   try {
+    const sheetName = SpreadsheetApp.getActiveSpreadsheet().getName();
     const payload = {
-      text: message
+      text: '[' + sheetName + '] ' + message
     };
 
     UrlFetchApp.fetch(webhookUrl, {

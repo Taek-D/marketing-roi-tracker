@@ -25,13 +25,17 @@
 2. Extensions > Apps Script.
 3. Project Settings > Script Properties.
 4. Add the following properties:
-   - `GOOGLE_ADS_CLIENT_ID`: (From Google Cloud)
-   - `GOOGLE_ADS_CLIENT_SECRET`: (From Google Cloud)
-   - `GOOGLE_ADS_DEVELOPER_TOKEN`: (From Google Ads Manager)
    - `GOOGLE_ADS_CUSTOMER_ID`: (Your Ad Account ID, no dashes)
-   - `FB_ACCESS_TOKEN`: (From Meta)
+   - `GOOGLE_ADS_DEVELOPER_TOKEN`: (From Google Ads Manager)
+   - `GOOGLE_ADS_REFRESH_TOKEN`: (OAuth2 Refresh Token)
    - `FB_AD_ACCOUNT_ID`: (act_XXXXXXXX)
-   - `SLACK_WEBHOOK_URL`: (For notifications)
+   - `FB_ACCESS_TOKEN`: (From Meta)
+   - `NAVER_ADS_CUSTOMER_ID`: (Optional - 광고주 ID)
+   - `NAVER_ADS_API_KEY`: (Optional - API Key)
+   - `NAVER_ADS_SECRET_KEY`: (Optional - Secret Key)
+   - `SLACK_WEBHOOK_URL`: (Optional - For notifications)
+
+> **Quick Setup**: `Setup.gs`의 `setupAll()` 함수를 먼저 실행하면 시트 생성 + 테스트 데이터가 자동으로 세팅됩니다.
 
 ## 4. Naver Search Ads Setup (Optional)
 네이버 검색광고 연동 가이드: [naver_setup_guide.md](./naver_setup_guide.md)

@@ -14,7 +14,7 @@ Google Apps Script 코드를 리뷰하는 전문 에이전트입니다.
 
 ### 성능
 - 6분 실행 제한 내에서 완료 가능한지 확인
-- API Rate Limit (Google Ads 15K/day, FB 200/hour) 준수 여부
+- API Rate Limit (Google Ads 15K/day, FB 200/hour, Naver 100/sec·100K/day) 준수 여부
 - 불필요한 시트 읽기/쓰기가 없는지 확인 (batch 처리 권장)
 
 ### 코딩 표준
