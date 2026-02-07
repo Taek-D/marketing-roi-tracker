@@ -2,6 +2,9 @@
  * MarketingROI Tracker - Core Logic
  */
 
+/**
+ * Creates custom menu when spreadsheet opens
+ */
 function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('MarketingROI Tracker')
@@ -46,6 +49,7 @@ function main() {
 /**
  * Fetch Data from Google Ads API
  * (Placeholder logic for demonstration)
+ * @returns {Array} Array of row data matching Raw Data schema
  */
 function fetchGoogleAdsData() {
   const customerId = getProperty('GOOGLE_ADS_CUSTOMER_ID');
@@ -53,16 +57,29 @@ function fetchGoogleAdsData() {
     log('Missing Google Ads Customer ID');
     return [];
   }
-  
-  // Real implementation would use UrlFetchApp with OAuth token
-  // GAQL Query: SELECT segments.date, metrics.cost_micros, metrics.impressions ...
-  
-  log('Fetching Google Ads data for customer: ' + customerId);
-  return []; // Return empty for now as we don't have real creds
+
+  for (let attempt = 1; attempt <= CONFIG.api.googleAds.maxRetries; attempt++) {
+    try {
+      // Real implementation would use UrlFetchApp with OAuth token
+      // GAQL Query: SELECT segments.date, metrics.cost_micros, metrics.impressions ...
+
+      log('Fetching Google Ads data for customer: ' + customerId);
+      return []; // Return empty for now as we don't have real creds
+    } catch (e) {
+      log('Google Ads fetch attempt ' + attempt + ' failed: ' + e.message);
+      if (attempt === CONFIG.api.googleAds.maxRetries) {
+        notifySlack('Google Ads fetch failed after ' + attempt + ' retries: ' + e.message);
+        return [];
+      }
+      Utilities.sleep(1000 * attempt);
+    }
+  }
+  return [];
 }
 
 /**
  * Fetch Data from Facebook Marketing API
+ * @returns {Array} Array of row data matching Raw Data schema
  */
 function fetchFacebookAdsData() {
   const accountId = getProperty('FB_AD_ACCOUNT_ID');
@@ -73,10 +90,22 @@ function fetchFacebookAdsData() {
     return [];
   }
 
-  // Real implementation would use UrlFetchApp
-  // Graph API: /act_{id}/insights?fields=...
-  
-  log('Fetching FB Ads data for account: ' + accountId);
+  for (let attempt = 1; attempt <= CONFIG.api.facebook.maxRetries; attempt++) {
+    try {
+      // Real implementation would use UrlFetchApp
+      // Graph API: /act_{id}/insights?fields=...
+
+      log('Fetching FB Ads data for account: ' + accountId);
+      return [];
+    } catch (e) {
+      log('FB Ads fetch attempt ' + attempt + ' failed: ' + e.message);
+      if (attempt === CONFIG.api.facebook.maxRetries) {
+        notifySlack('FB Ads fetch failed after ' + attempt + ' retries: ' + e.message);
+        return [];
+      }
+      Utilities.sleep(1000 * attempt);
+    }
+  }
   return [];
 }
 
@@ -91,18 +120,23 @@ function appendDataToSheet(sheet, data) {
 
 /**
  * Send notification to Slack
+ * @param {string} message - The message to send
  */
 function notifySlack(message) {
   const webhookUrl = CONFIG.slack.webhookUrl;
   if (!webhookUrl) return;
-  
-  const payload = {
-    text: message
-  };
-  
-  UrlFetchApp.fetch(webhookUrl, {
-    method: 'post',
-    contentType: 'application/json',
-    payload: JSON.stringify(payload)
-  });
+
+  try {
+    const payload = {
+      text: message
+    };
+
+    UrlFetchApp.fetch(webhookUrl, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload)
+    });
+  } catch (e) {
+    log('Slack notification failed: ' + e.message);
+  }
 }

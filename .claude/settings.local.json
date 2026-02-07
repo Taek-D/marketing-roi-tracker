@@ -13,7 +13,9 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "mcp__github__get_me",
-      "mcp__github__create_repository"
+      "mcp__github__create_repository",
+      "WebSearch",
+      "WebFetch(domain:naver-ad-api.github.io)"
     ],
     "deny": []
   },

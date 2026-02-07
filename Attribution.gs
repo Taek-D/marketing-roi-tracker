@@ -10,7 +10,13 @@ function calculateAttribution() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const rawSheet = ss.getSheetByName(CONFIG.sheetNames.rawData);
   const attrSheet = ss.getSheetByName(CONFIG.sheetNames.attribution);
-  
+
+  if (!rawSheet || !attrSheet) {
+    log('Required sheets not found: Raw Data or Attribution');
+    notifySlack('Attribution failed: Required sheets not found');
+    return;
+  }
+
   // Clear old data
   attrSheet.clearContents();
   attrSheet.appendRow(['Channel', 'Spend', 'Revenue', 'ROAS', 'Attribution Model']);
@@ -56,8 +62,12 @@ function calculateAttribution() {
  * Update Dashboard Sheet
  */
 function updateDashboard() {
-  // In a real scenario, this might update specific cells or refresh pivot tables
   const dashSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.sheetNames.dashboard);
+  if (!dashSheet) {
+    log('Dashboard sheet not found');
+    return;
+  }
+  // In a real scenario, this might update specific cells or refresh pivot tables
   dashSheet.getRange('C2').setValue(new Date()); // Last Updated
   log('Dashboard updated.');
 }
