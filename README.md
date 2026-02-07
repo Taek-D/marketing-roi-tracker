@@ -1,11 +1,11 @@
 # MarketingROI Tracker
 
 > 중소 이커머스를 위한 무료 멀티채널 마케팅 ROI 대시보드
-> Google Ads & Facebook Ads 데이터를 자동 수집하여 Google Sheets에서 ROAS를 시각화
+> Google Ads, Facebook Ads, 네이버 검색광고 데이터를 자동 수집하여 Google Sheets에서 ROAS를 시각화
 
 ## Features
 
-- **자동 데이터 수집**: Google Ads / Facebook Ads에서 매일 오전 9시(KST) 자동 수집
+- **자동 데이터 수집**: Google Ads / Facebook Ads / 네이버 검색광고에서 매일 오전 9시(KST) 자동 수집
 - **ROAS 대시보드**: 채널별 Spend, Revenue, ROAS를 한눈에 비교
 - **Last-Touch 애트리뷰션**: 채널별 기여 매출 자동 계산
 - **Slack 알림**: API 에러 발생 시 즉시 알림
@@ -45,7 +45,7 @@ clasp push
 
 이렇게 하면 한 번에:
 - 시트 4개 생성 (Raw Data, Attribution, Dashboard, Config)
-- 30일치 테스트 데이터 삽입
+- 30일치 테스트 데이터 삽입 (3채널 x 3캠페인)
 - 애트리뷰션 계산 + 대시보드 반영
 - 매일 오전 9시 자동 실행 트리거 설정
 
@@ -60,9 +60,13 @@ clasp push
 | `GOOGLE_ADS_REFRESH_TOKEN` | OAuth2 Refresh Token | Yes |
 | `FB_AD_ACCOUNT_ID` | Facebook 광고 계정 ID (예: act_123456) | Yes |
 | `FB_ACCESS_TOKEN` | Facebook 장기 액세스 토큰 (60일 또는 System User) | Yes |
+| `NAVER_ADS_CUSTOMER_ID` | 네이버 검색광고 광고주 ID | No |
+| `NAVER_ADS_API_KEY` | 네이버 검색광고 API Key | No |
+| `NAVER_ADS_SECRET_KEY` | 네이버 검색광고 Secret Key | No |
 | `SLACK_WEBHOOK_URL` | Slack 에러 알림용 Webhook URL | No |
 
 > 상세 인증 가이드: [auth_setup_instructions.md](./auth_setup_instructions.md)
+> 네이버 연동 가이드: [naver_setup_guide.md](./naver_setup_guide.md)
 
 ## Project Structure
 
@@ -94,7 +98,8 @@ marketing-roi-tracker/
 ├── .mcp.json               # MCP 서버 설정
 ├── PRD.md                  # 제품 요구사항 문서
 ├── claude.md               # 프로젝트 블루프린트 (API 스펙)
-└── auth_setup_instructions.md  # OAuth/토큰 설정 가이드
+├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
+└── naver_setup_guide.md    # 네이버 검색광고 API 연동 가이드
 ```
 
 ## Google Sheet 구조
@@ -109,10 +114,11 @@ marketing-roi-tracker/
 ## 데이터 흐름
 
 ```
-[Google Ads API] ──┐
-                   ├──→ Code.gs: main() ──→ Raw Data ──→ Attribution.gs ──→ Dashboard
-[Facebook Ads API]─┘         │
-                             └──→ Slack (에러 알림)
+[Google Ads API] ────┐
+[Facebook Ads API] ──┤
+[Naver Search Ads] ──┘──→ Code.gs: main() ──→ Raw Data ──→ Attribution.gs ──→ Dashboard
+                                │
+                                └──→ Slack (에러 알림)
 ```
 
 ## 개발 가이드
@@ -175,6 +181,7 @@ clasp open
 |------|------|------|
 | Google Ads API | 일 15,000 쿼리 | 배치 처리 |
 | Facebook Ads API | 시간당 200 호출 | Rate Limit 대기 |
+| Naver Search Ads API | 초당 100건, 일 100,000건 | 여유로움 |
 | Apps Script 실행 | 최대 6분 | CONFIG.timeLimit = 300초 |
 | Google Sheets | 10K행 이상 느려짐 | 90일치만 보존 |
 
@@ -192,6 +199,7 @@ clasp open
 - **Google Apps Script** (JavaScript ES6)
 - **Google Ads API** v15
 - **Facebook Marketing API** v18
+- **Naver Search Ads API**
 - **Google Sheets** (Dashboard)
 - **Slack Webhook** (알림)
 - **clasp** (로컬 개발/배포)

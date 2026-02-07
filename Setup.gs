@@ -17,7 +17,7 @@ function setupAll() {
   SpreadsheetApp.getUi().alert(
     'Setup Complete!\n\n' +
     '- 4 sheets created (Raw Data, Attribution, Dashboard, Config)\n' +
-    '- 30 days of test data inserted\n' +
+    '- 30 days of test data inserted (3 channels x 3 campaigns)\n' +
     '- Attribution calculated\n' +
     '- Daily 9AM trigger set\n\n' +
     'Open the Dashboard sheet to see results.'
@@ -121,6 +121,11 @@ function setupDashboardLayout(sheet) {
   sheet.getRange('C10').setFormula("=IFERROR('" + attrName + "'!C3, \"\")").setNumberFormat('$#,##0');
   sheet.getRange('D10').setFormula("=IFERROR('" + attrName + "'!D3, \"\")").setNumberFormat('0.00');
 
+  sheet.getRange('A11').setFormula("=IFERROR('" + attrName + "'!A4, \"\")");
+  sheet.getRange('B11').setFormula("=IFERROR('" + attrName + "'!B4, \"\")").setNumberFormat('$#,##0');
+  sheet.getRange('C11').setFormula("=IFERROR('" + attrName + "'!C4, \"\")").setNumberFormat('$#,##0');
+  sheet.getRange('D11').setFormula("=IFERROR('" + attrName + "'!D4, \"\")").setNumberFormat('0.00');
+
   // Column widths
   sheet.setColumnWidth(1, 180);
   sheet.setColumnWidth(2, 140);
@@ -147,6 +152,9 @@ function setupConfigSheet(sheet) {
     ['GOOGLE_ADS_REFRESH_TOKEN', 'OAuth2 Refresh Token for Google Ads', 'Yes'],
     ['FB_AD_ACCOUNT_ID', 'Facebook Ad Account ID (e.g. act_123456)', 'Yes'],
     ['FB_ACCESS_TOKEN', 'Facebook Long-lived Access Token (60-day or System User)', 'Yes'],
+    ['NAVER_ADS_CUSTOMER_ID', 'Naver Search Ads Customer ID (see naver_setup_guide.md)', 'No'],
+    ['NAVER_ADS_API_KEY', 'Naver Search Ads API Key (Tools > API Manager)', 'No'],
+    ['NAVER_ADS_SECRET_KEY', 'Naver Search Ads API Secret Key', 'No'],
     ['SLACK_WEBHOOK_URL', 'Slack Incoming Webhook URL for error alerts', 'No'],
   ];
 
@@ -175,7 +183,8 @@ function insertTestData() {
 
   const campaigns = {
     'Google Ads': ['Brand_Search', 'Generic_Search', 'Display_Retargeting'],
-    'Facebook Ads': ['Lookalike_Audience', 'Retargeting', 'Interest_Targeting']
+    'Facebook Ads': ['Lookalike_Audience', 'Retargeting', 'Interest_Targeting'],
+    'Naver Search Ads': ['Brand_Keywords', 'Product_Keywords', 'Competitor_Keywords']
   };
 
   const rows = [];

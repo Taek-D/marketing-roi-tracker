@@ -18,6 +18,10 @@ const CONFIG = {
     facebook: {
       baseUrl: 'https://graph.facebook.com/v18.0',
       maxRetries: 3
+    },
+    naverAds: {
+      baseUrl: 'https://api.searchad.naver.com',
+      maxRetries: 3
     }
   },
   

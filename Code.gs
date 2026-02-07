@@ -34,10 +34,16 @@ function main() {
       appendDataToSheet(rawDataSheet, fbAdsData);
     }
 
-    // 3. Run Attribution Logic
+    // 3. Fetch Naver Search Ads Data
+    const naverAdsData = fetchNaverSearchAdsData();
+    if (naverAdsData && naverAdsData.length > 0) {
+      appendDataToSheet(rawDataSheet, naverAdsData);
+    }
+
+    // 4. Run Attribution Logic
     calculateAttribution();
 
-    // 4. Update Dashboard
+    // 5. Update Dashboard
     updateDashboard();
 
   } catch (e) {
@@ -107,6 +113,115 @@ function fetchFacebookAdsData() {
     }
   }
   return [];
+}
+
+/**
+ * Fetch Data from Naver Search Ads API
+ * API Docs: https://naver.github.io/searchad-apidoc/
+ * Setup Guide: ./naver_setup_guide.md
+ * @returns {Array} Array of row data matching Raw Data schema
+ */
+function fetchNaverSearchAdsData() {
+  const customerId = getProperty('NAVER_ADS_CUSTOMER_ID');
+  const apiKey = getProperty('NAVER_ADS_API_KEY');
+  const secretKey = getProperty('NAVER_ADS_SECRET_KEY');
+
+  if (!customerId || !apiKey || !secretKey) {
+    log('Naver Search Ads: credentials not set (skip)');
+    return [];
+  }
+
+  for (let attempt = 1; attempt <= CONFIG.api.naverAds.maxRetries; attempt++) {
+    try {
+      // Generate HMAC-SHA256 signature for Naver API auth
+      const timestamp = String(new Date().getTime());
+      const method = 'GET';
+      const path = '/ncc/stats';
+      const signature = generateNaverSignature(timestamp, method, path, secretKey);
+
+      const url = CONFIG.api.naverAds.baseUrl + path +
+        '?id=' + customerId +
+        '&fields=["impCnt","clkCnt","salesAmt","ccnt","crto"]' +
+        '&timeRange={"since":"' + getYesterday() + '","until":"' + getYesterday() + '"}';
+
+      const response = UrlFetchApp.fetch(url, {
+        method: method,
+        headers: {
+          'X-Timestamp': timestamp,
+          'X-API-KEY': apiKey,
+          'X-Customer': customerId,
+          'X-Signature': signature
+        },
+        muteHttpExceptions: true
+      });
+
+      const code = response.getResponseCode();
+      if (code !== 200) {
+        throw new Error('Naver API returned ' + code + ': ' + response.getContentText());
+      }
+
+      const data = JSON.parse(response.getContentText());
+      log('Fetching Naver Ads data: ' + data.length + ' rows');
+      return parseNaverAdsResponse(data);
+    } catch (e) {
+      log('Naver Ads fetch attempt ' + attempt + ' failed: ' + e.message);
+      if (attempt === CONFIG.api.naverAds.maxRetries) {
+        notifySlack('Naver Ads fetch failed after ' + attempt + ' retries: ' + e.message);
+        return [];
+      }
+      Utilities.sleep(1000 * attempt);
+    }
+  }
+  return [];
+}
+
+/**
+ * Generate HMAC-SHA256 signature for Naver Ads API
+ * @param {string} timestamp - Unix timestamp in milliseconds
+ * @param {string} method - HTTP method
+ * @param {string} path - API path
+ * @param {string} secretKey - API secret key
+ * @returns {string} Base64-encoded signature
+ */
+function generateNaverSignature(timestamp, method, path, secretKey) {
+  const message = timestamp + '.' + method + '.' + path;
+  const signature = Utilities.computeHmacSha256Signature(message, secretKey);
+  return Utilities.base64Encode(signature);
+}
+
+/**
+ * Parse Naver Search Ads API response to Raw Data schema
+ * @param {Array} data - Naver API response
+ * @returns {Array} Rows matching [date, channel, campaign, cost, impressions, clicks, conversions, revenue]
+ */
+function parseNaverAdsResponse(data) {
+  const rows = [];
+  const dateStr = getYesterday();
+
+  data.forEach(function(item) {
+    rows.push([
+      dateStr,
+      'Naver Search Ads',
+      item.campaignName || 'Unknown',
+      item.salesAmt || 0,
+      item.impCnt || 0,
+      item.clkCnt || 0,
+      item.ccnt || 0,
+      item.crto || 0
+    ]);
+  });
+
+  return rows;
+}
+
+/**
+ * Get yesterday's date string (yyyy-MM-dd)
+ * @returns {string} Yesterday in yyyy-MM-dd format
+ */
+function getYesterday() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return Utilities.formatDate(d, 'Asia/Seoul', 'yyyy-MM-dd');
 }
 
 /**
