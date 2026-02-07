@@ -20,16 +20,20 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install acorn parser
+        run: npm install -g acorn
+
       - name: Syntax check all .gs files
         run: |
           echo "Checking .gs files for syntax errors..."
           errors=0
           for file in *.gs; do
-            if ! node -c "$(cat "$file")" 2>/dev/null; then
-              echo "FAIL: $file"
-              errors=$((errors + 1))
-            else
+            if acorn --ecma2020 --allow-import-export-everywhere "$file" > /dev/null 2>&1; then
               echo "PASS: $file"
+            else
+              echo "FAIL: $file"
+              acorn --ecma2020 --allow-import-export-everywhere "$file" 2>&1 || true
+              errors=$((errors + 1))
             fi
           done
           if [ $errors -gt 0 ]; then
@@ -41,7 +45,7 @@ jobs:
       - name: Check for hardcoded secrets
         run: |
           echo "Scanning for hardcoded secrets..."
-          if grep -rn --include="*.gs" -iE '(api_key|access_token|secret|password)\s*[:=]\s*["\x27][A-Za-z0-9]' *.gs; then
+          if grep -rn --include="*.gs" -iE '(api_key|access_token|secret|password)\s*[:=]\s*["'"'"'][A-Za-z0-9]' *.gs; then
             echo "WARNING: Possible hardcoded secrets found"
             exit 1
           fi
