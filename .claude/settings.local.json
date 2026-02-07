@@ -6,8 +6,39 @@
       "Bash(clasp status)",
       "Bash(clasp open)",
       "Bash(clasp login)",
-      "Bash(npx clasp *)"
+      "Bash(npx clasp *)",
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "mcp__github__get_me",
+      "mcp__github__create_repository"
     ],
     "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -c \"$(cat \"$CLAUDE_FILE_PATH\")\" 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qiE 'rm\\s+-rf|git\\s+push\\s+--force|drop\\s+table'; then echo 'BLOCK: Dangerous command detected'; exit 1; fi"
+          }
+        ]
+      }
+    ]
   }
 }
