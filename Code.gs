@@ -139,10 +139,12 @@ function fetchNaverSearchAdsData() {
       const path = '/ncc/stats';
       const signature = generateNaverSignature(timestamp, method, path, secretKey);
 
+      const fields = encodeURIComponent('["impCnt","clkCnt","salesAmt","ccnt","convAmt"]');
+      const timeRange = encodeURIComponent('{"since":"' + getYesterday() + '","until":"' + getYesterday() + '"}');
       const url = CONFIG.api.naverAds.baseUrl + path +
         '?id=' + customerId +
-        '&fields=["impCnt","clkCnt","salesAmt","ccnt","crto"]' +
-        '&timeRange={"since":"' + getYesterday() + '","until":"' + getYesterday() + '"}';
+        '&fields=' + fields +
+        '&timeRange=' + timeRange;
 
       const response = UrlFetchApp.fetch(url, {
         method: method,
@@ -207,7 +209,7 @@ function parseNaverAdsResponse(data) {
       item.impCnt || 0,
       item.clkCnt || 0,
       item.ccnt || 0,
-      item.crto || 0
+      item.convAmt || 0
     ]);
   });
 
@@ -226,11 +228,14 @@ function getYesterday() {
 
 /**
  * Append rows to sheet
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - Target sheet
+ * @param {Array<Array>} data - 2D array matching Raw Data schema
  */
 function appendDataToSheet(sheet, data) {
-  // data is array of objects, convert to 2D array matching headers
-  // implementation skipped for brevity
-  log('Appending ' + data.length + ' rows');
+  if (!data || data.length === 0) return;
+  const lastRow = sheet.getLastRow();
+  sheet.getRange(lastRow + 1, 1, data.length, data[0].length).setValues(data);
+  log('Appended ' + data.length + ' rows');
 }
 
 /**

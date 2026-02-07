@@ -2,7 +2,7 @@
 
 ## Project Overview
 Google Apps Script 기반 마케팅 ROI 자동화 대시보드.
-Google Ads / Facebook Ads 데이터를 수집하여 Google Sheets에서 ROAS를 시각화.
+Google Ads / Facebook Ads / Naver Search Ads 데이터를 수집하여 Google Sheets에서 ROAS를 시각화.
 
 ## Tech Stack
 - **Language**: Google Apps Script (JavaScript ES6 기반)
@@ -16,7 +16,8 @@ Google Ads / Facebook Ads 데이터를 수집하여 Google Sheets에서 ROAS를 
 Code.gs          # 메인 로직 (API 호출, 데이터 수집, main 엔트리)
 Config.gs        # 설정 상수 (CONFIG 객체) 및 유틸리티
 Attribution.gs   # ROAS/애트리뷰션 계산, 대시보드 업데이트
-claude.md        # 프로젝트 블루프린트 (참조 문서)
+Setup.gs         # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
+CLAUDE.md        # 프로젝트 개발 규칙 (이 파일)
 PRD.md           # 제품 요구사항 문서
 ```
 
@@ -67,7 +68,7 @@ Row index: 0=date, 1=channel, 2=campaign, 3=cost, 4=impressions, 5=clicks, 6=con
 - PII(개인식별정보) 저장 금지, 집계 데이터만 처리
 
 ## Reference Documents
-- `claude.md` - 프로젝트 블루프린트 및 API 스펙 상세
+- `CLAUDE.md` - 프로젝트 개발 규칙 (이 파일)
 - `PRD.md` - 상세 제품 요구사항 및 UI 레이아웃
 - `auth_setup_instructions.md` - OAuth/토큰 설정 가이드
 - `CHANGELOG.md` - 변경 이력

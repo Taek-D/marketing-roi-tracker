@@ -26,7 +26,9 @@ const CONFIG = {
   },
   
   slack: {
-    webhookUrl: PropertiesService.getScriptProperties().getProperty('SLACK_WEBHOOK_URL')
+    get webhookUrl() {
+      return PropertiesService.getScriptProperties().getProperty('SLACK_WEBHOOK_URL');
+    }
   },
 
   // Daily processing limit to avoid timeouts

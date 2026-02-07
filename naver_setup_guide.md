@@ -59,7 +59,7 @@ GET https://api.searchad.naver.com/ncc/stats
 | 파라미터 | 설명 |
 |----------|------|
 | `id` | Customer ID |
-| `fields` | 조회할 필드 (impCnt, clkCnt, salesAmt, ccnt, crto) |
+| `fields` | 조회할 필드 (impCnt, clkCnt, salesAmt, ccnt, convAmt) |
 | `timeRange` | 조회 기간 (since, until) |
 
 ### 필드 매핑
@@ -70,7 +70,7 @@ GET https://api.searchad.naver.com/ncc/stats
 | `clkCnt` | clicks | 클릭수 |
 | `salesAmt` | cost | 광고비 |
 | `ccnt` | conversions | 전환수 |
-| `crto` | revenue | 전환 매출 |
+| `convAmt` | revenue | 전환 매출 (원) |
 
 ### Rate Limit
 

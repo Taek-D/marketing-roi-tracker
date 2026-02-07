@@ -44,7 +44,7 @@ function calculateAttribution() {
   // Write result (Simple Last Touch as per MVP)
   for (const channel in stats) {
     const s = stats[channel];
-    const roas = s.spend > 0 ? (s.revenue / s.spend).toFixed(2) : 0;
+    const roas = s.spend > 0 ? Math.round((s.revenue / s.spend) * 100) / 100 : 0;
     
     attrSheet.appendRow([
       channel,

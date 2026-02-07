@@ -8,10 +8,11 @@ description: 프로젝트 전체 아키텍처 및 데이터 흐름. Use when wor
 ## 시스템 아키텍처
 
 ```
-[Google Ads API] ──┐
-                   ├──→ [Code.gs: main()] ──→ [Raw Data Sheet] ──→ [Attribution.gs] ──→ [Dashboard Sheet]
-[Facebook Ads API]─┘          │
-                              └──→ [Slack Webhook: 에러 알림]
+[Google Ads API] ────┐
+                     │
+[Facebook Ads API] ──┼──→ [Code.gs: main()] ──→ [Raw Data Sheet] ──→ [Attribution.gs] ──→ [Dashboard Sheet]
+                     │          │
+[Naver Search Ads] ──┘          └──→ [Slack Webhook: 에러 알림]
 ```
 
 ## 파일별 책임
@@ -28,9 +29,10 @@ description: 프로젝트 전체 아키텍처 및 데이터 흐름. Use when wor
 1. Raw Data 시트 참조
 2. fetchGoogleAdsData() → appendDataToSheet()
 3. fetchFacebookAdsData() → appendDataToSheet()
-4. calculateAttribution() → Attribution 시트 갱신
-5. updateDashboard() → Dashboard 시트 타임스탬프 갱신
-6. 에러 발생 시 → notifySlack()
+4. fetchNaverSearchAdsData() → appendDataToSheet() (HMAC-SHA256 인증)
+5. calculateAttribution() → Attribution 시트 갱신
+6. updateDashboard() → Dashboard 시트 타임스탬프 갱신
+7. 에러 발생 시 → notifySlack()
 
 ## Sheet 구조
 

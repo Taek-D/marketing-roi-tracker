@@ -33,5 +33,9 @@
    - `FB_AD_ACCOUNT_ID`: (act_XXXXXXXX)
    - `SLACK_WEBHOOK_URL`: (For notifications)
 
-## 4. Initial Test
-Run the `testConnection()` function in `Code.gs` to verify access.
+## 4. Naver Search Ads Setup (Optional)
+네이버 검색광고 연동 가이드: [naver_setup_guide.md](./naver_setup_guide.md)
+
+## 5. Initial Test
+Apps Script 에디터에서 `main` 함수를 실행하여 연결을 확인하세요.
+`View > Logs`에서 각 채널의 fetch 로그를 확인할 수 있습니다.
