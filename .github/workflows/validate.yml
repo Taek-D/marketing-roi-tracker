@@ -1,0 +1,47 @@
+name: Validate GAS Code
+
+on:
+  push:
+    branches: [master]
+    paths: ['*.gs']
+  pull_request:
+    branches: [master]
+    paths: ['*.gs']
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Syntax check all .gs files
+        run: |
+          echo "Checking .gs files for syntax errors..."
+          errors=0
+          for file in *.gs; do
+            if ! node -c "$(cat "$file")" 2>/dev/null; then
+              echo "FAIL: $file"
+              errors=$((errors + 1))
+            else
+              echo "PASS: $file"
+            fi
+          done
+          if [ $errors -gt 0 ]; then
+            echo "$errors file(s) have syntax errors"
+            exit 1
+          fi
+          echo "All files passed syntax check"
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Scanning for hardcoded secrets..."
+          if grep -rn --include="*.gs" -iE '(api_key|access_token|secret|password)\s*[:=]\s*["\x27][A-Za-z0-9]' *.gs; then
+            echo "WARNING: Possible hardcoded secrets found"
+            exit 1
+          fi
+          echo "No hardcoded secrets detected"
