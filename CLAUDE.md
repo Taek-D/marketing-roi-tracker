@@ -13,14 +13,18 @@ Google Ads / Facebook Ads / Naver Search Ads 데이터를 수집하여 Google Sh
 
 ## Project Structure
 ```
-Code.gs          # 메인 로직 (API 호출, 데이터 수집, main 엔트리)
-Config.gs        # 설정 상수 (CONFIG 객체) 및 유틸리티
-Attribution.gs   # Multi-Touch 애트리뷰션 (5모델) + 퍼널 분석, 대시보드 업데이트
-Report.gs        # 이상치 탐지 (Z-score) + 주간 자동 리포트
-Setup.gs         # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
-Tests.gs         # 단위 테스트 (30개 테스트 케이스)
-CLAUDE.md        # 프로젝트 개발 규칙 (이 파일)
-PRD.md           # 제품 요구사항 문서
+automation/              # GAS 자동화 코드
+  Code.gs                # 메인 로직 (API 호출, 데이터 수집, main 엔트리)
+  Config.gs              # 설정 상수 (CONFIG 객체) 및 유틸리티
+  Attribution.gs         # Multi-Touch 애트리뷰션 (5모델) + 퍼널 분석, 대시보드 업데이트
+  Report.gs              # 이상치 탐지 (Z-score) + 주간 자동 리포트
+  Setup.gs               # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
+  Tests.gs               # 단위 테스트 (30개 테스트 케이스)
+  appsscript.json        # Apps Script 매니페스트
+  auth_setup_instructions.md  # Google/Facebook 인증 가이드
+  naver_setup_guide.md   # 네이버 검색광고 API 연동 가이드
+CLAUDE.md                # 프로젝트 개발 규칙 (이 파일)
+PRD.md                   # 제품 요구사항 문서
 ```
 > 전체 프로젝트 구조는 README.md 참조
 
@@ -76,6 +80,6 @@ Row index: 0=date, 1=channel, 2=campaign, 3=cost, 4=impressions, 5=clicks, 6=con
 ## Reference Documents
 - `CLAUDE.md` - 프로젝트 개발 규칙 (이 파일)
 - `PRD.md` - 상세 제품 요구사항 및 UI 레이아웃
-- `auth_setup_instructions.md` - OAuth/토큰 설정 가이드
+- `automation/auth_setup_instructions.md` - OAuth/토큰 설정 가이드
 - `README.md` - 팀 온보딩 가이드 및 전체 프로젝트 구조
-- `naver_setup_guide.md` - 네이버 검색광고 API 연동 가이드
+- `automation/naver_setup_guide.md` - 네이버 검색광고 API 연동 가이드

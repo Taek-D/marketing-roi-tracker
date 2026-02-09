@@ -56,6 +56,7 @@
 | 7 | **시나리오 분석: Conservative에서도 하방 리스크 제한적** | 3시나리오 시뮬레이션 + Guard Rail 설정 | ROAS 하한 자동 모니터링 체계 구축 |
 
 > 상세 분석: [`analysis/report/executive_summary.md`](./analysis/report/executive_summary.md)
+> 실행 로드맵: [`analysis/report/action_roadmap.md`](./analysis/report/action_roadmap.md)
 
 ### 통계적으로 확인되지 않은 패턴
 
@@ -147,13 +148,16 @@
 
 ```
 marketing-roi-tracker/
-├── Code.gs                     # 메인 로직 (API 호출, 데이터 수집, Slack 알림)
-├── Config.gs                   # 전역 설정 (CONFIG 객체, getProperty, log)
-├── Attribution.gs              # Multi-Touch 애트리뷰션 (5모델) + 퍼널 분석
-├── Report.gs                   # 이상치 탐지 (Z-score) + 주간 자동 리포트
-├── Setup.gs                    # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
-├── Tests.gs                    # 단위 테스트 (30개 테스트 케이스)
-├── appsscript.json             # Apps Script 매니페스트
+├── automation/                 # GAS 자동화 코드 (clasp rootDir)
+│   ├── Code.gs                 # 메인 로직 (API 호출, 데이터 수집, Slack 알림)
+│   ├── Config.gs               # 전역 설정 (CONFIG 객체, getProperty, log)
+│   ├── Attribution.gs          # Multi-Touch 애트리뷰션 (5모델) + 퍼널 분석
+│   ├── Report.gs               # 이상치 탐지 (Z-score) + 주간 자동 리포트
+│   ├── Setup.gs                # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
+│   ├── Tests.gs                # 단위 테스트 (30개 테스트 케이스)
+│   ├── appsscript.json         # Apps Script 매니페스트
+│   ├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
+│   └── naver_setup_guide.md    # 네이버 검색광고 API 연동 가이드
 │
 ├── analysis/                   # 마케팅 ROI 심층 분석
 │   ├── MarketingROI_Analysis.ipynb           # 기본 분석 (EDA, 통계검정, 회귀, 최적화)
@@ -170,7 +174,8 @@ marketing-roi-tracker/
 │   │   └── tableau_campaign.csv              # 캠페인 상세
 │   ├── charts/                               # 분석 차트 (PNG 15개)
 │   └── report/
-│       └── executive_summary.md              # 경영진 보고서
+│       ├── executive_summary.md              # 경영진 보고서
+│       └── action_roadmap.md                 # 통합 실행 로드맵
 │
 ├── dashboard/                  # 인터랙티브 대시보드
 │   └── index.html              # Chart.js 기반 (Vercel 배포)
@@ -184,9 +189,7 @@ marketing-roi-tracker/
 ├── README.md
 ├── CLAUDE.md                   # 개발 규칙
 ├── PRD.md                      # 제품 요구사항 문서
-├── CHANGELOG.md                # 버전 히스토리
-├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
-└── naver_setup_guide.md        # 네이버 검색광고 API 연동 가이드
+└── CHANGELOG.md                # 버전 히스토리
 ```
 
 ## Quick Start
@@ -213,12 +216,12 @@ jupyter notebook
 npm install -g @google/clasp
 clasp login
 clasp create --title "MarketingROI Tracker" --type sheets
-clasp push
+clasp push    # .clasp.json의 rootDir: "automation" 기준으로 push
 ```
 
 Apps Script 에디터에서 `setupAll` 실행 → 시트 4개 생성 + 테스트 데이터 + 트리거 설정 완료
 
-> API 인증 가이드: [auth_setup_instructions.md](./auth_setup_instructions.md) | [naver_setup_guide.md](./naver_setup_guide.md)
+> API 인증 가이드: [auth_setup_instructions.md](./automation/auth_setup_instructions.md) | [naver_setup_guide.md](./automation/naver_setup_guide.md)
 
 ## License
 

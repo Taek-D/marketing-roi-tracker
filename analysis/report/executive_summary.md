@@ -167,3 +167,5 @@
 ---
 
 *본 보고서는 `MarketingROI_Analysis.ipynb` 및 `MarketingROI_Advanced_Analysis.ipynb` 노트북의 분석 결과를 기반으로 작성되었습니다.*
+
+> **실행 로드맵**: 3단계 액션 플랜, Guard Rail 기준표, 시나리오별 의사결정 기준을 통합한 상세 로드맵은 [`action_roadmap.md`](./action_roadmap.md)를 참조하세요.
