@@ -30,7 +30,8 @@
       "mcp__supabase__list_projects",
       "mcp__supabase__apply_migration",
       "mcp__supabase__execute_sql",
-      "mcp__vercel__deploy_to_vercel"
+      "mcp__vercel__deploy_to_vercel",
+      "mcp__vercel__get_project"
     ],
     "deny": []
   },
