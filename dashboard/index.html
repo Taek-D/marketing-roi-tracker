@@ -302,11 +302,11 @@
         <!-- KPI Cards -->
         <div class="kpi-grid">
             <div class="kpi-card">
-                <div class="kpi-value" id="kpiSpend">$164,170</div>
+                <div class="kpi-value" id="kpiSpend">₩2억1,342만</div>
                 <div class="kpi-label">총 광고비</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-value" id="kpiRevenue">$437,128</div>
+                <div class="kpi-value" id="kpiRevenue">₩5억6,827만</div>
                 <div class="kpi-label">총 매출</div>
             </div>
             <div class="kpi-card highlight">
@@ -361,7 +361,7 @@
                             <th>채널</th>
                             <th>CTR (%)</th>
                             <th>CVR (%)</th>
-                            <th>CPA ($)</th>
+                            <th>CPA (₩)</th>
                             <th>ROAS</th>
                             <th>상태</th>
                         </tr>
@@ -412,7 +412,14 @@
         });
     }
 
-    function fmt$(v) { return '$' + Math.round(v).toLocaleString(); }
+    const RATE = 1300;
+    function fmtW(v) {
+        v = Math.round(v * RATE);
+        if (Math.abs(v) >= 100000000) return '₩' + (v / 100000000).toFixed(1) + '억';
+        if (Math.abs(v) >= 10000) return '₩' + Math.round(v / 10000).toLocaleString() + '만';
+        return '₩' + v.toLocaleString();
+    }
+    function fmtWRaw(v) { return '₩' + Math.round(v).toLocaleString(); }
 
     // ===== UPDATE ALL =====
     function updateAll() {
@@ -436,8 +443,8 @@
         const avgRoas = totalCost > 0 ? (totalRev / totalCost) : 0;
 
         // KPI Cards
-        document.getElementById('kpiSpend').textContent = fmt$(totalCost);
-        document.getElementById('kpiRevenue').textContent = fmt$(totalRev);
+        document.getElementById('kpiSpend').textContent = fmtW(totalCost);
+        document.getElementById('kpiRevenue').textContent = fmtW(totalRev);
         document.getElementById('kpiRoas').textContent = avgRoas.toFixed(2);
         document.getElementById('kpiConversions').textContent = totalConv.toLocaleString();
 
@@ -461,7 +468,7 @@
         barChart.update();
 
         // 2. Revenue Pie Chart
-        const pieRevs = channels.map(ch => Math.round(byChannel[ch].rv));
+        const pieRevs = channels.map(ch => Math.round(byChannel[ch].rv * RATE));
         const pieTotalRev = pieRevs.reduce((a, b) => a + b, 0);
         pieChart.data.labels = channels.map((ch, i) => {
             const pct = pieTotalRev > 0 ? (pieRevs[i] / pieTotalRev * 100).toFixed(1) : '0.0';
@@ -472,7 +479,7 @@
         pieChart.options.plugins.tooltip.callbacks.label = function(ctx) {
             var v = ctx.raw;
             var pct = pieTotalRev > 0 ? (v / pieTotalRev * 100).toFixed(1) : '0.0';
-            return '$' + v.toLocaleString() + ' (' + pct + '%)';
+            return fmtWRaw(v) + ' (' + pct + '%)';
         };
         pieChart.update();
 
@@ -506,7 +513,7 @@
             var roas = c.co > 0 ? +(c.rv / c.co).toFixed(2) : 0;
             return {
                 label: c.camp,
-                data: [{ x: c.co / 1000, y: c.rv / 1000, r: roas * 4 }],
+                data: [{ x: c.co * RATE / 1000000, y: c.rv * RATE / 1000000, r: roas * 4 }],
                 backgroundColor: col.bg + '99',
                 borderColor: col.border,
                 borderWidth: 1.5
@@ -527,7 +534,7 @@
         tbody.innerHTML = rows.map(function(r) {
             var ctr = r.im > 0 ? (r.cl / r.im * 100).toFixed(2) : '0.00';
             var cvr = r.cl > 0 ? (r.cv / r.cl * 100).toFixed(2) : '0.00';
-            var cpa = r.cv > 0 ? (r.co / r.cv).toFixed(2) : '-';
+            var cpa = r.cv > 0 ? '₩' + Math.round(r.co / r.cv * RATE).toLocaleString() : '-';
             var roas = r.co > 0 ? (r.rv / r.co).toFixed(2) : '0.00';
             var roasVal = parseFloat(roas);
             var tag = 'tag-warn', label = '개선 필요';
@@ -564,7 +571,7 @@
             responsive: true, maintainAspectRatio: false,
             plugins: {
                 legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } },
-                tooltip: { callbacks: { label: function(ctx) { return '$' + ctx.raw.toLocaleString(); } } }
+                tooltip: { callbacks: { label: function(ctx) { return fmtWRaw(ctx.raw); } } }
             }
         }
     });
@@ -599,13 +606,13 @@
                 tooltip: { callbacks: {
                     label: function(ctx) {
                         var d = ctx.raw;
-                        return [ctx.dataset.label, '비용: $' + (d.x*1000).toLocaleString(), '매출: $' + (d.y*1000).toLocaleString(), 'ROAS: ' + (d.r/4).toFixed(2) + 'x'];
+                        return [ctx.dataset.label, '비용: ₩' + Math.round(d.x*1000000).toLocaleString(), '매출: ₩' + Math.round(d.y*1000000).toLocaleString(), 'ROAS: ' + (d.r/4).toFixed(2) + 'x'];
                     }
                 } }
             },
             scales: {
-                x: { title: { display: true, text: '비용 ($K)', font: { size: 12 } }, grid: { color: '#f1f3f4' } },
-                y: { title: { display: true, text: '매출 ($K)', font: { size: 12 } }, grid: { color: '#f1f3f4' } }
+                x: { title: { display: true, text: '비용 (백만원)', font: { size: 12 } }, grid: { color: '#f1f3f4' } },
+                y: { title: { display: true, text: '매출 (백만원)', font: { size: 12 } }, grid: { color: '#f1f3f4' } }
             }
         }
     });
