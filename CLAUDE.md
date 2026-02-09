@@ -15,8 +15,10 @@ Google Ads / Facebook Ads / Naver Search Ads 데이터를 수집하여 Google Sh
 ```
 Code.gs          # 메인 로직 (API 호출, 데이터 수집, main 엔트리)
 Config.gs        # 설정 상수 (CONFIG 객체) 및 유틸리티
-Attribution.gs   # ROAS/애트리뷰션 계산, 대시보드 업데이트
+Attribution.gs   # Multi-Touch 애트리뷰션 (5모델) + 퍼널 분석, 대시보드 업데이트
+Report.gs        # 이상치 탐지 (Z-score) + 주간 자동 리포트
 Setup.gs         # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
+Tests.gs         # 단위 테스트 (30개 테스트 케이스)
 CLAUDE.md        # 프로젝트 개발 규칙 (이 파일)
 PRD.md           # 제품 요구사항 문서
 ```
@@ -54,12 +56,15 @@ Row index: 0=date, 1=channel, 2=campaign, 3=cost, 4=impressions, 5=clicks, 6=con
 - **getProperty(key)**: Script Properties 접근 래퍼
 - **notifySlack(message)**: 에러 발생 시 Slack Webhook 알림
 - **appendDataToSheet(sheet, data)**: Raw Data 시트에 데이터 append
-- **calculateAttribution()**: Last-Touch 기반 채널별 기여 매출 계산
+- **calculateAttribution()**: 5가지 Multi-Touch 모델 + 퍼널 메트릭 계산
+- **calculateTimeDecayWeights()**: 지수 감쇠 가중치 (half-life 7일)
+- **detectAnomalies()**: Z-score 기반 ROAS 이상치 탐지 + Slack 알림
+- **generateWeeklyReport()**: 주간 성과 요약 + WoW 비교 Slack 발송
 - **updateDashboard()**: Dashboard 시트 갱신 (마지막 업데이트 시간 기록)
 - **onOpen()**: 스프레드시트 열 때 커스텀 메뉴 "MarketingROI Tracker" 생성
 - **fetchNaverSearchAdsData()**: 네이버 검색광고 데이터 수집 (HMAC-SHA256 인증)
 - **generateNaverSignature()**: 네이버 API 서명 생성
-- **main()**: 전체 파이프라인 실행 (fetch 3채널 → append → attribute → dashboard)
+- **main()**: 전체 파이프라인 실행 (fetch 3채널 → append → attribute → dashboard → anomaly)
 
 ## 금지 사항
 - API 키/토큰을 코드에 직접 작성 금지

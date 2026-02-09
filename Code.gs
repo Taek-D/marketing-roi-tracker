@@ -12,6 +12,9 @@ function onOpen() {
       .addSeparator()
       .addItem('Run Setup', 'setupAll')
       .addItem('Recalculate Attribution', 'calculateAttribution')
+      .addSeparator()
+      .addItem('Send Weekly Report', 'generateWeeklyReport')
+      .addItem('Check Anomalies', 'detectAnomalies')
       .addToUi();
 }
 
@@ -59,6 +62,9 @@ function main() {
 
     // 6. Update Dashboard
     updateDashboard(ss);
+
+    // 7. Detect Anomalies (alerts via Slack)
+    detectAnomalies(ss);
 
   } catch (e) {
     log('Error in main: ' + e.message);

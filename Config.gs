@@ -36,7 +36,14 @@ const CONFIG = {
   timeLimit: 300, // 5 minutes (seconds)
 
   /** @type {number|null} Execution start time (set by main) */
-  startTime: null
+  startTime: null,
+
+  // Anomaly detection settings
+  anomaly: {
+    zScoreThreshold: 2.0,  // |Z| >= 2 triggers alert
+    lookbackDays: 30,      // days of historical data for baseline
+    minDataPoints: 7       // minimum days required to calculate Z-score
+  }
 };
 
 /**

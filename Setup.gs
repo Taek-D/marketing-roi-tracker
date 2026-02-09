@@ -13,13 +13,15 @@ function setupAll() {
   calculateAttribution();
   updateDashboard();
   setupDailyTrigger();
-  log('Setup complete! All sheets created, test data inserted, trigger set.');
+  setupWeeklyReportTrigger();
+  log('Setup complete! All sheets created, test data inserted, triggers set.');
   SpreadsheetApp.getUi().alert(
     'Setup Complete!\n\n' +
     '- 4 sheets created (Raw Data, Attribution, Dashboard, Config)\n' +
     '- 30 days of test data inserted (3 channels x 3 campaigns)\n' +
-    '- Attribution calculated\n' +
-    '- Daily 9AM trigger set\n\n' +
+    '- Attribution calculated (5 models + funnel)\n' +
+    '- Daily 9AM trigger set (data + anomaly detection)\n' +
+    '- Weekly Monday 10AM report trigger set\n\n' +
     'Open the Dashboard sheet to see results.'
   );
 }
@@ -239,4 +241,26 @@ function setupDailyTrigger() {
     .create();
 
   log('Daily trigger set: main() at 9:00 AM KST');
+}
+
+/**
+ * Setup weekly trigger for generateWeeklyReport() every Monday 10 AM KST
+ */
+function setupWeeklyReportTrigger() {
+  // Remove existing triggers for generateWeeklyReport to avoid duplicates
+  const triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(function(trigger) {
+    if (trigger.getHandlerFunction() === 'generateWeeklyReport') {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+
+  ScriptApp.newTrigger('generateWeeklyReport')
+    .timeBased()
+    .onWeekDay(ScriptApp.WeekDay.MONDAY)
+    .atHour(10)
+    .inTimezone('Asia/Seoul')
+    .create();
+
+  log('Weekly trigger set: generateWeeklyReport() every Monday at 10:00 AM KST');
 }

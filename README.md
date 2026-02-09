@@ -3,13 +3,24 @@
 > 중소 이커머스를 위한 무료 멀티채널 마케팅 ROI 대시보드
 > Google Ads, Facebook Ads, 네이버 검색광고 데이터를 자동 수집하여 Google Sheets에서 ROAS를 시각화
 
+## Dashboard Preview
+
+![Dashboard Preview](docs/screenshots/dashboard_preview.png)
+
+> `generate_data.py`로 생성한 90일치 시뮬레이션 데이터 기반 대시보드. 12가지 실무 마케팅 패턴이 반영되어 있습니다.
+
 ## Features
 
 - **자동 데이터 수집**: Google Ads / Facebook Ads / 네이버 검색광고에서 매일 오전 9시(KST) 자동 수집
 - **ROAS 대시보드**: 채널별 Spend, Revenue, ROAS를 한눈에 비교
-- **Last-Touch 애트리뷰션**: 채널별 기여 매출 자동 계산
-- **Slack 알림**: API 에러 발생 시 즉시 알림
+- **Multi-Touch 애트리뷰션**: 5가지 모델 비교 (Last-Touch, First-Touch, Linear, Time-Decay, Position-Based)
+- **마케팅 퍼널 분석**: CTR, CVR, CPA, CPM 등 퍼널 단계별 핵심 지표 자동 산출
+- **이상치 탐지**: Z-score 기반 ROAS 이상치 실시간 감지 + Slack 알림
+- **주간 자동 리포트**: 주간 성과 요약 + 전주 대비 변화율 Slack 발송
+- **시계열 예측**: ARIMA / Holt-Winters 모델로 30일 ROAS 예측 (Python 노트북)
+- **Slack 알림**: API 에러, 이상치 감지, 주간 리포트 자동 발송
 - **CI/CD**: `.gs` 파일 변경 시 자동 구문 검사 + 시크릿 스캔
+- **Unit Tests**: 핵심 비즈니스 로직 단위 테스트 (30개 테스트 케이스)
 
 ## Quick Start (5분)
 
@@ -74,8 +85,10 @@ clasp push
 marketing-roi-tracker/
 ├── Code.gs                 # 메인 로직 (API 호출, 데이터 수집, Slack 알림)
 ├── Config.gs               # 전역 설정 (CONFIG 객체, getProperty, log)
-├── Attribution.gs          # ROAS 계산, 대시보드 업데이트
+├── Attribution.gs          # Multi-Touch 애트리뷰션 (5모델) + 퍼널 분석
+├── Report.gs               # 이상치 탐지 (Z-score) + 주간 자동 리포트
 ├── Setup.gs                # 초기 설정 (시트 생성, 테스트 데이터, 트리거)
+├── Tests.gs                # 단위 테스트 (30개 테스트 케이스)
 ├── CLAUDE.md               # Claude Code 개발 규칙
 ├── .claude/
 │   ├── settings.local.json # 권한, Hooks 설정
@@ -96,13 +109,18 @@ marketing-roi-tracker/
 ├── .github/workflows/
 │   └── validate.yml        # CI: 구문 검사 + 시크릿 스캔
 ├── .mcp.json               # MCP 서버 설정
-├── analysis/                   # 📊 마케팅 ROI 심층 분석
+├── docs/
+│   ├── dashboard_mockup.html      # 대시보드 미리보기 (HTML)
+│   └── screenshots/
+│       └── dashboard_preview.png  # 대시보드 스크린샷
+├── analysis/                   # 마케팅 ROI 심층 분석
 │   ├── generate_data.py            # 현실적 패턴 내장 데이터 생성기
-│   ├── MarketingROI_Analysis.ipynb # 메인 분석 노트북 (9섹션, 10차트)
+│   ├── MarketingROI_Analysis.ipynb          # 메인 분석 노트북 (9섹션, 10차트)
+│   ├── MarketingROI_Advanced_Analysis.ipynb # 고급 분석 (애트리뷰션 비교, 퍼널, 예측)
 │   ├── requirements.txt            # Python 의존성
 │   ├── data/
 │   │   └── marketing_raw_data.csv  # 90일 x 3채널 x 3캠페인 (810행)
-│   ├── charts/                     # 고해상도 분석 차트 (PNG 10개)
+│   ├── charts/                     # 고해상도 분석 차트 (PNG 13개)
 │   └── report/
 │       └── executive_summary.md    # 경영진용 인사이트 보고서
 ├── PRD.md                  # 제품 요구사항 문서
@@ -124,9 +142,12 @@ marketing-roi-tracker/
 
 ```
 [Google Ads API] ────┐
-[Facebook Ads API] ──┤
-[Naver Search Ads] ──┘──→ Code.gs: main() ──→ Raw Data ──→ Attribution.gs ──→ Dashboard
-                                │
+[Facebook Ads API] ──┤                                              ┌──→ Dashboard
+[Naver Search Ads] ──┘──→ Code.gs: main() ──→ Raw Data ──→ Attribution.gs
+                                │                               │   └──→ Funnel Analysis
+                                │                               │
+                                │                          Report.gs ──→ Anomaly Detection ──→ Slack
+                                │                               └──→ Weekly Report ──→ Slack
                                 └──→ Slack (에러 알림)
 ```
 
@@ -184,6 +205,28 @@ clasp open
 | conversions | 6 | number | 전환수 |
 | revenue | 7 | number | 매출 ($) |
 
+## Tests
+
+`Tests.gs`에 핵심 비즈니스 로직에 대한 단위 테스트가 포함되어 있습니다.
+
+**실행 방법**: Apps Script 에디터 → 함수 드롭다운 → `runAllTests` → 실행 (▶) → View → Logs
+
+| 테스트 그룹 | 테스트 수 | 검증 내용 |
+|-------------|:---------:|-----------|
+| parseNaverAdsResponse | 3 | Naver API 응답 → Raw Data 스키마 변환 |
+| isTimeLimitNear | 3 | 6분 실행 제한 체크 로직 |
+| getYesterday | 1 | 날짜 포맷 (yyyy-MM-dd) |
+| generateNaverSignature | 2 | HMAC-SHA256 서명 생성 |
+| Data Validation | 2 | 8컬럼 스키마 검증 |
+| Attribution Calculation | 4 | ROAS 계산, 0 나누기 방지, 다채널 집계 |
+| Prune Logic | 2 | 90일 초과 데이터 필터링 |
+| Time-Decay Weights | 2 | 지수 감쇠 가중치, 다채널 독립 계산 |
+| Multi-Touch Attribution | 3 | First-Touch (노출 가중), Linear (균등), Position-Based (U-Shape) |
+| Funnel Metrics | 3 | CTR, CVR, CPA 계산 및 0 나누기 방지 |
+| Anomaly Detection | 2 | Z-score 계산, 정상 데이터 미경보 |
+| Weekly Report | 3 | changeStr (+/- 표시), formatNum (콤마 포맷) |
+| **합계** | **30** | |
+
 ## 제약 사항
 
 | 항목 | 제한 | 대응 |
@@ -225,7 +268,8 @@ Apps Script 자동화 시스템에서 수집하는 데이터를 기반으로 한
 cd analysis
 pip install -r requirements.txt
 python generate_data.py          # 실무급 데이터 생성 (12가지 패턴)
-jupyter notebook MarketingROI_Analysis.ipynb  # 분석 노트북 실행
+jupyter notebook MarketingROI_Analysis.ipynb          # 기본 분석 노트북
+jupyter notebook MarketingROI_Advanced_Analysis.ipynb  # 고급 분석 (애트리뷰션, 퍼널, 예측)
 ```
 
 ### 분석 내용
@@ -238,6 +282,14 @@ jupyter notebook MarketingROI_Analysis.ipynb  # 분석 노트북 실행
 | 회귀 분석 | 선형 vs 로그 vs 다항식 모델 비교 | Multi-fit Scatter |
 | 예산 최적화 | ROAS 기반 최적 배분, 한계 ROAS | Dual Bar, Line + Threshold |
 | 이상치 탐지 | Z-score 기반 이상치 식별 | Timeline + Markers |
+
+**고급 분석 노트북** (`MarketingROI_Advanced_Analysis.ipynb`):
+
+| 섹션 | 분석 | 주요 차트 |
+|------|------|-----------|
+| Multi-Touch 애트리뷰션 | 5모델 비교 (Last/First/Linear/Decay/Position) | Grouped Bar, Revenue Share Pie |
+| 마케팅 퍼널 | 정규화 퍼널, CTR vs CVR 관계, CPA 비교 | Funnel Chart, Scatter, Bar |
+| 시계열 예측 | ARIMA(2,1,2) + Holt-Winters 30일 예측 | Line + 95% CI Band |
 
 ### Tableau 인터랙티브 대시보드
 

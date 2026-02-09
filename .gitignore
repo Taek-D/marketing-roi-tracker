@@ -21,6 +21,9 @@ desktop.ini
 *.swp
 *.swo
 
+# Playwright MCP
+.playwright-mcp/
+
 # Python
 __pycache__/
 *.pyc
