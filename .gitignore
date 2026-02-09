@@ -24,6 +24,14 @@ desktop.ini
 # Playwright MCP
 .playwright-mcp/
 
+# bkit plugin artifacts
+docs/.bkit-memory.json
+docs/.pdca-status.json
+docs/.pdca-snapshots/
+
+# Tableau workbook (CSV 데이터 + 가이드로 대체)
+*.twbx
+
 # Python
 __pycache__/
 *.pyc
