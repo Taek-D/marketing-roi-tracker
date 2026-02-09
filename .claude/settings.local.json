@@ -15,7 +15,22 @@
       "mcp__github__get_me",
       "mcp__github__create_repository",
       "WebSearch",
-      "WebFetch(domain:naver-ad-api.github.io)"
+      "WebFetch(domain:naver-ad-api.github.io)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_close",
+      "WebFetch(domain:github.com)",
+      "mcp__notion__API-post-search",
+      "mcp__notion__API-get-block-children",
+      "mcp__notion__API-post-page",
+      "mcp__notion__API-get-self",
+      "mcp__notion__API-patch-block-children",
+      "mcp__notion__API-delete-a-block",
+      "mcp__notion__API-retrieve-a-page",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__execute_sql",
+      "mcp__vercel__deploy_to_vercel"
     ],
     "deny": []
   },

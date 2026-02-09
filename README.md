@@ -9,6 +9,16 @@
 
 > `generate_data.py`로 생성한 90일치 시뮬레이션 데이터 기반 대시보드. 12가지 실무 마케팅 패턴이 반영되어 있습니다.
 
+## Interactive Dashboard
+
+**[Live Demo](https://dashboard-kappa-self-57.vercel.app)** - Chart.js 기반 인터랙티브 대시보드 (Vercel 배포)
+
+- KPI 카드 4개 (Total Spend, Revenue, ROAS, Conversions)
+- 채널별 ROAS 바 차트 + 매출 비중 도넛 차트
+- 90일 일별 ROAS 추이 + 7일 이동평균 라인 차트
+- 캠페인 성과 매트릭스 (버블 차트)
+- 퍼널 지표 테이블 (CTR, CVR, CPA)
+
 ## Features
 
 - **자동 데이터 수집**: Google Ads / Facebook Ads / 네이버 검색광고에서 매일 오전 9시(KST) 자동 수집
@@ -18,6 +28,8 @@
 - **이상치 탐지**: Z-score 기반 ROAS 이상치 실시간 감지 + Slack 알림
 - **주간 자동 리포트**: 주간 성과 요약 + 전주 대비 변화율 Slack 발송
 - **시계열 예측**: ARIMA / Holt-Winters 모델로 30일 ROAS 예측 (Python 노트북)
+- **SQL 분석**: Supabase PostgreSQL에서 Window Function, CTE, Z-score 등 고급 SQL 분석
+- **인터랙티브 대시보드**: Chart.js 기반 인터랙티브 대시보드 (Vercel 배포)
 - **Slack 알림**: API 에러, 이상치 감지, 주간 리포트 자동 발송
 - **CI/CD**: `.gs` 파일 변경 시 자동 구문 검사 + 시크릿 스캔
 - **Unit Tests**: 핵심 비즈니스 로직 단위 테스트 (30개 테스트 케이스)
@@ -117,12 +129,15 @@ marketing-roi-tracker/
 │   ├── generate_data.py            # 현실적 패턴 내장 데이터 생성기
 │   ├── MarketingROI_Analysis.ipynb          # 메인 분석 노트북 (9섹션, 10차트)
 │   ├── MarketingROI_Advanced_Analysis.ipynb # 고급 분석 (애트리뷰션 비교, 퍼널, 예측)
+│   ├── MarketingROI_SQL_Analysis.ipynb      # SQL 분석 (8개 쿼리, Supabase PostgreSQL)
 │   ├── requirements.txt            # Python 의존성
 │   ├── data/
 │   │   └── marketing_raw_data.csv  # 90일 x 3채널 x 3캠페인 (810행)
 │   ├── charts/                     # 고해상도 분석 차트 (PNG 13개)
 │   └── report/
 │       └── executive_summary.md    # 경영진용 인사이트 보고서
+├── dashboard/                  # 인터랙티브 대시보드 (Vercel 배포)
+│   └── index.html                  # Chart.js 기반 인터랙티브 대시보드
 ├── PRD.md                  # 제품 요구사항 문서
 ├── blueprint.md            # 프로젝트 블루프린트 (API 스펙)
 ├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
@@ -291,6 +306,21 @@ jupyter notebook MarketingROI_Advanced_Analysis.ipynb  # 고급 분석 (애트�
 | 마케팅 퍼널 | 정규화 퍼널, CTR vs CVR 관계, CPA 비교 | Funnel Chart, Scatter, Bar |
 | 시계열 예측 | ARIMA(2,1,2) + Holt-Winters 30일 예측 | Line + 95% CI Band |
 
+**SQL 분석 노트북** (`MarketingROI_SQL_Analysis.ipynb`):
+
+Supabase PostgreSQL에 적재된 데이터를 대상으로 고급 SQL 분석을 수행합니다.
+
+| # | 분석 | SQL 기법 |
+|---|------|----------|
+| 1 | 채널별 KPI 요약 | GROUP BY + 집계 함수 |
+| 2 | 일별 ROAS + 7일 이동평균 | AVG() OVER (ROWS BETWEEN) |
+| 3 | 캠페인별 랭킹 | RANK() OVER (PARTITION BY) |
+| 4 | 주중 vs 주말 비교 | CASE WHEN + EXTRACT(DOW) |
+| 5 | 월별 성과 트렌드 | DATE_TRUNC + GROUP BY |
+| 6 | 채널별 누적 매출 | SUM() OVER (ORDER BY) |
+| 7 | 이상치 탐지 | CTE + Z-score (STDDEV OVER) |
+| 8 | 예산 최적화 시뮬레이션 | 다단계 CTE + CROSS JOIN |
+
 ### Tableau 인터랙티브 대시보드
 
 Tableau Public으로 핵심 지표를 시각화했습니다.
@@ -323,6 +353,9 @@ Tableau Public으로 핵심 지표를 시각화했습니다.
 - **Facebook Marketing API** v21
 - **Naver Search Ads API**
 - **Google Sheets** (Dashboard)
+- **Supabase PostgreSQL** (SQL 분석)
+- **Chart.js** (인터랙티브 대시보드)
+- **Vercel** (대시보드 배포)
 - **Slack Webhook** (알림)
 - **clasp** (로컬 개발/배포)
 - **GitHub Actions** (CI)

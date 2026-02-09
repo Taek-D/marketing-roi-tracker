@@ -42,10 +42,11 @@
 **우선순위**: P0 (필수)
 
 #### 상세 기능
-- **지원 플랫폼** (MVP):
-  - Google Ads API
-  - Facebook Ads API
-  - (향후) 네이버 GFA, 카카오모먼트
+- **지원 플랫폼**:
+  - Google Ads API ✅
+  - Facebook Ads API ✅
+  - Naver Search Ads API ✅ (v0.2.0에서 추가)
+  - (향후) 카카오모먼트
 - **수집 데이터**:
   - 일별 집계: 날짜, 광고비(cost), 노출수(impressions), 클릭수(clicks), 전환수(conversions), 매출(revenue)
   - 캠페인명, 광고소재ID (선택적)
@@ -63,10 +64,11 @@
 | 2026-02-05 | Facebook Ads | Retargeting | 800 | 30000 | 600 | 15 | 3000 |
 
 #### 기술 스택
-- **언어**: Google Apps Script (JavaScript 기반)
+- **언어**: Google Apps Script (JavaScript ES6 기반)
 - **API 라이브러리**:
-  - Google Ads API v15
-  - Facebook Marketing API v18
+  - Google Ads API v18
+  - Facebook Marketing API v21
+  - Naver Search Ads API (HMAC-SHA256 인증)
 - **인증**: OAuth 2.0 (Refresh Token 자동 갱신)
 
 ---
@@ -75,9 +77,12 @@
 **우선순위**: P0 (필수, MVP는 Last-Touch만)
 
 #### 상세 기능
-- **지원 모델** (v1.0):
-  - **Last-Touch**: 마지막 터치포인트에 100% 크레딧
-  - (v2.0에서 추가) First-Touch, Linear, Time-Decay
+- **지원 모델** (v0.5.0 현재):
+  - **Last-Touch**: 마지막 터치포인트에 100% 크레딧 ✅
+  - **First-Touch**: 노출 비중으로 배분 ✅
+  - **Linear**: 노출+클릭+전환 균등 배분 ✅
+  - **Time-Decay**: 지수 감쇠 가중치 (반감기 7일) ✅
+  - **Position-Based (U-Shape)**: 40% First + 40% Last + 20% Linear ✅
 - **데이터 소스**:
   - GA4 → BigQuery Export → User Journey 테이블
   - 또는 UTM 파라미터 기반 (간소화 버전)
@@ -267,8 +272,9 @@
   - `gspread` (Google Sheets API)
 
 ### 데이터 소스
-- **Google Ads API v15**
-- **Facebook Marketing API v18**
+- **Google Ads API v18**
+- **Facebook Marketing API v21**
+- **Naver Search Ads API** (HMAC-SHA256 인증)
 - **GA4 → BigQuery** (Optional, User Journey 데이터)
 
 ### 외부 서비스
@@ -321,20 +327,27 @@
 
 ## 🎯 우선순위 (Prioritization)
 
-### P0 (Must-Have for MVP)
-1. ✅ Google Ads + Facebook Ads 자동 수집
-2. ✅ Last-Touch 애트리뷰션
-3. ✅ ROAS 대시보드 (파이 차트 + 테이블)
+### P0 (Must-Have for MVP) — 완료
+1. ✅ Google Ads + Facebook Ads + Naver Ads 자동 수집
+2. ✅ Multi-Touch 애트리뷰션 (5모델)
+3. ✅ ROAS 대시보드
 
-### P1 (Nice-to-Have)
-4. 🔸 예산 시뮬레이터
-5. 🔸 네이버 GFA/카카오모먼트 연동
-6. 🔸 주간 리포트 이메일 자동 발송
+### P1 — 완료
+4. ✅ 예산 최적화 분석 (Python 노트북)
+5. ✅ 네이버 검색광고 연동 (v0.2.0)
+6. ✅ 주간 리포트 Slack 자동 발송 (v0.5.0)
 
-### P2 (Future Enhancements)
-7. 🔹 First-Touch, Linear, Time-Decay 모델
-8. 🔹 GA4 BigQuery 연동 (User Journey)
-9. 🔹 Slack 봇 (대화형 조회)
+### P2 — 대부분 완료
+7. ✅ First-Touch, Linear, Time-Decay, Position-Based 모델 (v0.5.0)
+8. 🔹 GA4 BigQuery 연동 (User Journey) — 미구현
+9. ✅ Slack 알림 (에러, 이상치, 주간 리포트)
+
+### 추가 구현 (계획 외)
+10. ✅ Z-score 이상치 탐지 + Slack 알림 (v0.5.0)
+11. ✅ 마케팅 퍼널 분석 (CTR, CVR, CPA, CPM)
+12. ✅ 시계열 예측 ARIMA + Holt-Winters (Python 노트북)
+13. ✅ 단위 테스트 30개 (Tests.gs)
+14. ✅ CI/CD — GitHub Actions 구문 검사 + 시크릿 스캔
 
 ---
 
@@ -431,6 +444,7 @@
 
 ---
 
-**문서 작성일**: 2026-02-06  
-**버전**: v1.0  
+**문서 작성일**: 2026-02-06
+**최종 업데이트**: 2026-02-09
+**프로젝트 버전**: v0.5.0
 **작성자**: 데이터 분석가 포트폴리오 프로젝트

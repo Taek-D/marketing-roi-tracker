@@ -206,9 +206,14 @@ jupyter notebook
 
 ### 4-2. 노트북 열기
 
+**기본 분석 노트북**:
 1. 브라우저에서 `MarketingROI_Analysis.ipynb` 클릭
 2. 상단 메뉴: `Kernel` → `Restart & Run All` 선택
 3. 모든 셀이 순차적으로 실행됩니다 (약 1-2분 소요)
+
+**고급 분석 노트북** (애트리뷰션, 퍼널, 예측):
+1. `MarketingROI_Advanced_Analysis.ipynb` 클릭
+2. 동일하게 `Kernel` → `Restart & Run All` 실행
 
 ### 4-3. 실행 중 확인사항
 
@@ -236,10 +241,10 @@ jupyter notebook
 cd charts
 ls
 
-# 10개의 PNG 파일 확인:
+# 13개의 PNG 파일 확인:
 # 01_channel_cost_revenue.png
 # 02_daily_roas_trend.png
-# ... (총 10개)
+# ... (총 13개)
 ```
 
 **차트 목록**:
@@ -253,6 +258,9 @@ ls
 8. 예산 최적화
 9. 한계 ROAS 곡선
 10. 이상치 탐지
+11. Multi-Touch 애트리뷰션 모델 비교 (고급)
+12. 마케팅 퍼널 분석 (고급)
+13. ROAS 시계열 예측 (고급)
 
 ### 5-2. Executive Summary 확인
 
@@ -465,7 +473,7 @@ mkdir -p analysis/charts
 - [ ] 데이터 파일 확인 (`marketing_raw_data.csv`, 52KB)
 - [ ] Jupyter Notebook 실행
 - [ ] 노트북 전체 실행 (`Restart & Run All`)
-- [ ] 차트 10개 생성 확인 (`analysis/charts/`)
+- [ ] 차트 13개 생성 확인 (`analysis/charts/`)
 - [ ] Executive Summary 확인
 - [ ] (선택) Tableau 데이터 Export
 - [ ] (선택) Tableau 대시보드 제작

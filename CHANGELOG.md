@@ -5,11 +5,83 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### TODO — 향후 진행 예정
-- [x] GitHub에서 노트북 렌더링 정상 확인
 - [ ] Google Ads / Facebook Ads / Naver Ads 실제 API 연동 테스트
-- [x] clasp push를 통한 Apps Script 배포 및 실행 검증
-- [x] 실 데이터 기반 분석 노트북 2차 버전 작성
-- [x] Tableau Public 대시보드 준비
+
+---
+
+## [0.7.0] - 2026-02-09
+
+### Added — Supabase SQL 분석 + 인터랙티브 대시보드 배포
+
+#### Supabase PostgreSQL SQL 분석
+- **Supabase 테이블 생성**: `marketing_raw_data` (810행 적재 완료)
+- **SQL 분석 노트북**: `analysis/MarketingROI_SQL_Analysis.ipynb` (신규)
+  - 8개 고급 SQL 분석 쿼리 실행 및 결과 수록
+  - 사용된 SQL 기법: Window Function, CTE, RANK, PARTITION BY, Z-score, CROSS JOIN
+  - 핵심 인사이트 5개 + SQL 기법 요약 테이블
+
+**SQL 분석 쿼리 8개**:
+
+| # | 분석 | SQL 기법 |
+|---|------|----------|
+| 1 | 채널별 KPI 요약 | GROUP BY + 집계 함수 |
+| 2 | 일별 ROAS + 7일 이동평균 | AVG() OVER (ROWS BETWEEN) |
+| 3 | 캠페인별 랭킹 | RANK() OVER (PARTITION BY) |
+| 4 | 주중 vs 주말 비교 | CASE WHEN + EXTRACT(DOW) |
+| 5 | 월별 성과 트렌드 | DATE_TRUNC + GROUP BY |
+| 6 | 채널별 누적 매출 | SUM() OVER (ORDER BY) |
+| 7 | 이상치 탐지 | CTE + Z-score (STDDEV OVER) |
+| 8 | 예산 최적화 시뮬레이션 | 다단계 CTE + CROSS JOIN |
+
+#### 인터랙티브 대시보드 (Chart.js + Vercel)
+- **`dashboard/index.html`** (신규): Chart.js 기반 인터랙티브 대시보드
+  - KPI 카드 4개 (Total Spend, Revenue, ROAS, Conversions)
+  - 채널별 ROAS 바 차트
+  - 매출 비중 도넛 차트
+  - 90일 일별 ROAS 추이 + 7일 이동평균 라인 차트 (3채널)
+  - 캠페인 성과 매트릭스 (버블 차트, 9개 캠페인)
+  - 퍼널 지표 테이블 (CTR, CVR, CPA)
+- **Vercel 배포**: https://dashboard-kappa-self-57.vercel.app
+- 반응형 디자인 (모바일 대응)
+- 외부 의존성 없는 정적 사이트 (Chart.js CDN만 사용)
+
+### Changed — 문서 업데이트
+- **README.md**: 인터랙티브 대시보드 URL, SQL 분석 섹션, Tech Stack 추가
+- **CHANGELOG.md**: v0.7.0 기록
+
+### 성과 요약
+
+**정량적 개선**:
+- SQL 분석 쿼리: 0 → 8개 (신규)
+- 인터랙티브 차트: 0 → 5개 (신규)
+- Supabase 테이블: 0 → 1개 (810행)
+- 배포 URL: 0 → 1개 (Vercel)
+- 분석 노트북: 2 → 3개 (+50%)
+
+**정성적 개선**:
+- SQL 역량 입증: Window Function, CTE, Z-score 등 고급 SQL 기법 활용
+- 대시보드 고도화: 정적 HTML → 인터랙티브 Chart.js + Vercel 배포
+- 데이터 인프라: CSV 파일 → Supabase PostgreSQL 적재
+
+---
+
+## [0.6.0] - 2026-02-09
+
+### Added — Notion 포트폴리오 페이지
+
+#### Notion 포트폴리오 페이지 생성
+- **"프로젝트" 하위 페이지**: "마케팅 ROI 최적화 대시보드" 페이지 생성
+- **3개 섹션 구성**:
+  - 섹션 1: 프로젝트 소개 (기간, 참여도, 기술 스택, 핵심 성과)
+  - 섹션 2: 프로젝트 진행과정 (4단계: 수집/EDA/고급분석/자동화)
+  - 섹션 3: 핵심 인사이트 & 성과
+- **이미지 7개 삽입**: GitHub raw URL로 차트 스크린샷 삽입
+- **Notion MCP 버그 발견 및 패치**: `API-post-page` parent 직렬화 버그 수정
+
+### Fixed — 프로젝트 설정
+- `appsscript.json`: Timezone `America/New_York` → `Asia/Seoul` 수정
+- `PRD.md`: API 버전, 구현 상태, 우선순위 현행화
+- `START.md`: 차트 수 10개 → 13개, 고급 분석 노트북 안내 추가
 
 ---
 
