@@ -168,7 +168,7 @@ marketing-roi-tracker/
 │   │   ├── tableau_summary.csv               # 채널별 집계
 │   │   ├── tableau_daily.csv                 # 일별 트렌드
 │   │   └── tableau_campaign.csv              # 캠페인 상세
-│   ├── charts/                               # 분석 차트 (PNG 13개)
+│   ├── charts/                               # 분석 차트 (PNG 15개)
 │   └── report/
 │       └── executive_summary.md              # 경영진 보고서
 │

@@ -3,6 +3,7 @@
 > **분석 기간**: 2024-10-01 ~ 2024-12-29 (90일)
 > **채널**: Google Ads, Facebook Ads, Naver Ads (9개 캠페인)
 > **작성일**: 2025-01
+> **통화**: KRW (₩), 환율 1 USD = 1,300 KRW 적용
 
 ---
 
@@ -10,8 +11,8 @@
 
 | 지표 | 수치 |
 |------|------|
-| 총 광고비 | $173,469 |
-| 총 매출 | $464,945 |
+| 총 광고비 | ₩2억 2,551만 |
+| 총 매출 | ₩6억 443만 |
 | 전체 ROAS | 2.68 |
 | 총 전환수 | 8,000+ |
 
@@ -19,15 +20,15 @@
 
 | 채널 | 광고비 | 매출 | ROAS | 평가 |
 |------|--------|------|------|------|
-| **Naver Ads** | $53,607 (30.9%) | $175,702 | **3.28** | 최고 효율 |
-| **Google Ads** | $59,818 (34.5%) | $165,690 | **2.77** | 양호 |
-| **Facebook Ads** | $60,044 (34.6%) | $123,553 | **2.05** | 개선 필요 |
+| **Naver Ads** | ₩6,969만 (30.9%) | ₩2억 2,841만 | **3.28** | 최고 효율 |
+| **Google Ads** | ₩7,776만 (34.5%) | ₩2억 1,540만 | **2.77** | 양호 |
+| **Facebook Ads** | ₩7,806만 (34.6%) | ₩1억 6,062만 | **2.05** | 개선 필요 |
 
 > Naver Ads가 가장 낮은 광고비로 가장 높은 매출을 달성 (ROAS 3.28)
 
 ---
 
-## 2. 핵심 발견 5가지
+## 2. 핵심 발견 7가지
 
 ### 발견 1: 네이버 광고 효율성 우위
 - Naver Ads ROAS(3.28)가 Google(2.77), Facebook(2.05) 대비 현저히 높음
@@ -63,6 +64,23 @@
 
 ![이상치 탐지](../charts/10_outlier_detection.png)
 
+### 발견 6: A/B 테스트 실험 설계의 한계 진단
+- Google Generic 캠페인 소재 변경 A/B 테스트 (11/15~22) 분석
+- **n=8/그룹 → 검정력 45.7%** (목표 80% 미달), 유의미한 효과 검출 불가
+- MDE(최소 검출 효과) = 0.98σ → 최소 **n=17/그룹** 확보 필요
+- 사전 검정력 분석(Power Analysis) 없이 실험 시 자원 낭비 위험
+
+![A/B 테스트 분석](../charts/14_ab_test_analysis.png)
+
+### 발견 7: 3-시나리오 분석으로 하방 리스크 정량화
+- **Conservative** (네이버 경쟁 과열): 매출 -3.1% → 하방 리스크 제한적
+- **Base** (현행 ROAS 유지 + 재배분): 매출 +4.3%
+- **Optimistic** (Facebook CVR 개선 + 시즌 효과): 매출 +11.8%
+- 확률 가중 **기대값: +4.8%** (약 ₩2,900만 추가 매출)
+- Guard Rail 기반 자동 방어 체계 제안 (ROAS 하한, CPA 상한, 일 예산 한도)
+
+![시나리오 분석](../charts/15_scenario_analysis.png)
+
 ---
 
 ## 3. 예산 최적화 제안
@@ -71,14 +89,14 @@
 
 | 채널 | 현행 비율 | 최적 비율 | 변동액 |
 |------|:---------:|:---------:|-------:|
-| Naver Ads | 30.9% | **40.4%** | +$16,540 |
-| Google Ads | 34.5% | **34.2%** | -$461 |
-| Facebook Ads | 34.6% | **25.3%** | -$16,079 |
+| Naver Ads | 30.9% | **40.4%** | +₩2,150만 |
+| Google Ads | 34.5% | **34.2%** | -₩60만 |
+| Facebook Ads | 34.6% | **25.3%** | -₩2,090만 |
 
 ### 예상 효과
-- **총 예산 동일** 유지 ($173,469)
-- **예상 매출**: $464,945 → **$484,849** (+4.3%)
-- ROAS 비중 기반 재배분만으로 약 **$20,000 추가 매출** 가능
+- **총 예산 동일** 유지 (₩2억 2,551만)
+- **예상 매출**: ₩6억 443만 → **₩6억 3,030만** (+4.3%)
+- ROAS 비중 기반 재배분만으로 약 **₩2,600만 추가 매출** 가능
 
 ![예산 최적화](../charts/08_budget_optimization.png)
 
@@ -118,6 +136,11 @@
 | 모델 비교 | 선형/로그/다항식 R² 비교 | sklearn |
 | 예산 최적화 | ROAS 가중 재배분 | pandas |
 | 이상치 탐지 | Z-score (|Z|>2) | scipy.stats |
+| 멀티터치 어트리뷰션 | 5모델 비교 (Last/First/Linear/Decay/Position) | pandas |
+| 퍼널 분석 | CTR/CVR/CPA 병목 진단 | pandas |
+| 시계열 예측 | ADF 검정 + ARIMA(2,1,2) | statsmodels |
+| A/B 테스트 | ITT 원칙, Welch's t-test, Power Analysis | scipy, statsmodels |
+| 시나리오 분석 | 3-시나리오 (Conservative/Base/Optimistic) + Guard Rail | pandas |
 
 ---
 
@@ -135,7 +158,12 @@
 | 8 | 현행 vs 최적 예산 배분 | `charts/08_budget_optimization.png` |
 | 9 | 한계 ROAS 곡선 | `charts/09_marginal_roas.png` |
 | 10 | 이상치 탐지 타임라인 | `charts/10_outlier_detection.png` |
+| 11 | 어트리뷰션 모델 비교 | `charts/11_attribution_model_comparison.png` |
+| 12 | 마케팅 퍼널 분석 | `charts/12_funnel_analysis.png` |
+| 13 | ROAS 시계열 예측 | `charts/13_roas_forecast.png` |
+| 14 | A/B 테스트 분석 | `charts/14_ab_test_analysis.png` |
+| 15 | 예산 시나리오 분석 | `charts/15_scenario_analysis.png` |
 
 ---
 
-*본 보고서는 `MarketingROI_Analysis.ipynb` 노트북의 분석 결과를 기반으로 작성되었습니다.*
+*본 보고서는 `MarketingROI_Analysis.ipynb` 및 `MarketingROI_Advanced_Analysis.ipynb` 노트북의 분석 결과를 기반으로 작성되었습니다.*
