@@ -1,3 +1,7 @@
+---
+name: Attribution Analyst
+---
+
 # Attribution Analyst Agent
 
 마케팅 애트리뷰션 모델을 분석하고 개선하는 전문 에이전트입니다.

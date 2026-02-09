@@ -1,3 +1,7 @@
+---
+name: Code Reviewer
+---
+
 # Code Reviewer Agent
 
 Google Apps Script 코드를 리뷰하는 전문 에이전트입니다.

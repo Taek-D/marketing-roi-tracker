@@ -96,6 +96,15 @@ marketing-roi-tracker/
 ├── .github/workflows/
 │   └── validate.yml        # CI: 구문 검사 + 시크릿 스캔
 ├── .mcp.json               # MCP 서버 설정
+├── analysis/                   # 📊 마케팅 ROI 심층 분석
+│   ├── generate_data.py            # 현실적 패턴 내장 데이터 생성기
+│   ├── MarketingROI_Analysis.ipynb # 메인 분석 노트북 (9섹션, 10차트)
+│   ├── requirements.txt            # Python 의존성
+│   ├── data/
+│   │   └── marketing_raw_data.csv  # 90일 x 3채널 x 3캠페인 (810행)
+│   ├── charts/                     # 고해상도 분석 차트 (PNG 10개)
+│   └── report/
+│       └── executive_summary.md    # 경영진용 인사이트 보고서
 ├── PRD.md                  # 제품 요구사항 문서
 ├── blueprint.md            # 프로젝트 블루프린트 (API 스펙)
 ├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
@@ -193,6 +202,36 @@ clasp open
 - **시크릿 스캔**: API 키/토큰 하드코딩 여부 검사
 
 수동 실행: [Actions 탭](https://github.com/Taek-D/marketing-roi-tracker/actions) → "Run workflow"
+
+## 데이터 분석 (analysis/)
+
+Apps Script 자동화 시스템에서 수집하는 데이터를 기반으로 한 **마케팅 ROI 심층 분석** 포트폴리오입니다.
+
+### 분석 실행
+
+```bash
+cd analysis
+pip install -r requirements.txt
+python generate_data.py          # 90일 샘플 데이터 생성
+jupyter notebook MarketingROI_Analysis.ipynb  # 분석 노트북 실행
+```
+
+### 분석 내용
+
+| 섹션 | 분석 | 주요 차트 |
+|------|------|-----------|
+| EDA | 채널별 성과, ROAS 추이, 캠페인 매트릭스 | Grouped Bar, Multi-Line, Bubble |
+| 심층 분석 | 요일별 패턴, 체감수익 분석 | Heatmap, Scatter + Log Curve |
+| 통계 검정 | t-test (주중/주말), ANOVA (채널 간) | Box Plot + p-value |
+| 회귀 분석 | 선형 vs 로그 vs 다항식 모델 비교 | Multi-fit Scatter |
+| 예산 최적화 | ROAS 기반 최적 배분, 한계 ROAS | Dual Bar, Line + Threshold |
+| 이상치 탐지 | Z-score 기반 이상치 식별 | Timeline + Markers |
+
+### 핵심 인사이트
+
+- Naver Ads ROAS(3.28)가 Google(2.77), Facebook(2.05) 대비 최고 효율
+- ROAS 가중 예산 재배분으로 동일 예산 대비 **+4.3% 매출 증가** 가능
+- 상세 내용: [`analysis/report/executive_summary.md`](./analysis/report/executive_summary.md)
 
 ## Tech Stack
 

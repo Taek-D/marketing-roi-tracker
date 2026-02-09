@@ -1,3 +1,7 @@
+---
+name: API Integrator
+---
+
 # API Integrator Agent
 
 광고 플랫폼 API 연동을 전문적으로 처리하는 에이전트입니다.

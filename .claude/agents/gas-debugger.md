@@ -1,3 +1,7 @@
+---
+name: GAS Debugger
+---
+
 # GAS Debugger Agent
 
 Google Apps Script 코드의 디버깅을 전문적으로 처리하는 에이전트입니다.
