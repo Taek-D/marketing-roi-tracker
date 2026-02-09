@@ -1,0 +1,10 @@
+﻿channel,campaign,cost,impressions,clicks,conversions,revenue,ROAS,CTR,CVR
+Facebook Ads,FB_Interest,19734.53,1737667,62016,1746,36015.76,1.83,3.57,2.82
+Facebook Ads,FB_Lookalike,25148.79,2205299,77288,2787,50052.2,1.99,3.5,3.61
+Facebook Ads,FB_Retargeting,11971.95,1025369,56249,2552,29206.03,2.44,5.49,4.54
+Google Ads,Google_Brand,15573.73,1426370,110974,6990,53977.43,3.47,7.78,6.3
+Google Ads,Google_Generic,30631.15,2934281,92219,2134,71056.34,2.32,3.14,2.31
+Google Ads,Google_Retargeting,10190.23,881423,54626,2493,30893.35,3.03,6.2,4.56
+Naver Ads,Naver_Brand,12584.15,1179786,84291,5931,51067.45,4.06,7.14,7.04
+Naver Ads,Naver_Retargeting,8438.93,747784,48770,2967,28933.71,3.43,6.52,6.08
+Naver Ads,Naver_Shopping,29896.14,2657018,105484,3881,85926.08,2.87,3.97,3.68

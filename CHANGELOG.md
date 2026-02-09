@@ -5,11 +5,38 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### TODO — 향후 진행 예정
-- [ ] `analysis/` 포함 git commit + push
-- [ ] GitHub에서 노트북 렌더링 정상 확인
+- [x] GitHub에서 노트북 렌더링 정상 확인
 - [ ] Google Ads / Facebook Ads / Naver Ads 실제 API 연동 테스트
-- [ ] clasp push를 통한 Apps Script 배포 및 실행 검증
+- [x] clasp push를 통한 Apps Script 배포 및 실행 검증
 - [ ] 실 데이터 기반 분석 노트북 2차 버전 작성
+- [x] Tableau Public 대시보드 준비
+
+---
+
+## [0.4.0] - 2026-02-09
+
+### Changed — 실무급 시뮬레이션 데이터로 업그레이드
+- **데이터 생성 고도화**: 7가지 → 12가지 실무 패턴 반영
+  - 기존: 채널 효율성, 캠페인 차이, 요일 효과, 성장 트렌드, 체감수익, 블랙프라이데이, FB 추적장애
+  - 신규: 광고 피로도, 경쟁사 이벤트 (Naver 11.11), 예산 제약, A/B 테스트, 계절성
+- **노이즈 증가**: ±12% → ±15-25%로 현실감 강화
+- **백업**: 기존 데이터 → `marketing_raw_data_backup.csv`
+
+### Added — Tableau Public 대시보드 준비
+- `analysis/export_for_tableau.py`: Tableau용 데이터 Export 스크립트
+  - `tableau_summary.csv`: 채널별 집계 (3행)
+  - `tableau_daily.csv`: 일별 트렌드 (270행)
+  - `tableau_campaign.csv`: 캠페인 상세 (9행)
+- `analysis/DATA_DOWNLOAD_GUIDE.md`: 데이터 다운로드 가이드 (Kaggle/Maven Analytics)
+- `analysis/download_kaggle_data.py`: Kaggle API 다운로드 스크립트
+
+### Updated
+- `README.md`: "실무급 시뮬레이션 데이터" 섹션 추가
+  - 12가지 패턴 설명
+  - Tableau 대시보드 사용법
+  - A/B 테스트 인사이트 추가
+- `analysis/generate_data.py`: Production-Grade 버전으로 전면 개선
+
 
 ---
 

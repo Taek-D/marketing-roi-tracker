@@ -207,19 +207,31 @@ clasp open
 
 Apps Script 자동화 시스템에서 수집하는 데이터를 기반으로 한 **마케팅 ROI 심층 분석** 포트폴리오입니다.
 
+### 데이터 특징
+
+**실무급 시뮬레이션 데이터** (Production-Grade Simulation)
+- **12가지 실무 패턴 반영**: 채널 효율성, 요일 효과, 광고 피로도, 예산 제약, A/B 테스트, 계절성 등
+- **현 실적 노이즈**: ±15-25% 불규칙성으로 실제 마케팅 데이터의 복잡성 재현
+- **비즈니스 이벤트**: 블랙프라이데이, 11.11 세일, Facebook 추적 장애 등
+- **분석 방법론**: 실무에서 즉시 적용 가능한 통계 검정, 회귀 분석, 예산 최적화 기법
+
+> ⚠️ **주의**: 이 데이터는 교육 및 포트폴리오 목적의 **시뮬레이션 데이터**입니다. 
+> 하지만 실제 마케팅 캠페인의 패턴과 복잡성을 충실히 반영하여, 
+> 분석 방법론과 인사이트 도출 역량을 입증하는 데 적합합니다.
+
 ### 분석 실행
 
 ```bash
 cd analysis
 pip install -r requirements.txt
-python generate_data.py          # 90일 샘플 데이터 생성
+python generate_data.py          # 실무급 데이터 생성 (12가지 패턴)
 jupyter notebook MarketingROI_Analysis.ipynb  # 분석 노트북 실행
 ```
 
 ### 분석 내용
 
 | 섹션 | 분석 | 주요 차트 |
-|------|------|-----------|
+|------|------|--------------|
 | EDA | 채널별 성과, ROAS 추이, 캠페인 매트릭스 | Grouped Bar, Multi-Line, Bubble |
 | 심층 분석 | 요일별 패턴, 체감수익 분석 | Heatmap, Scatter + Log Curve |
 | 통계 검정 | t-test (주중/주말), ANOVA (채널 간) | Box Plot + p-value |
@@ -227,10 +239,29 @@ jupyter notebook MarketingROI_Analysis.ipynb  # 분석 노트북 실행
 | 예산 최적화 | ROAS 기반 최적 배분, 한계 ROAS | Dual Bar, Line + Threshold |
 | 이상치 탐지 | Z-score 기반 이상치 식별 | Timeline + Markers |
 
+### Tableau 인터랙티브 대시보드
+
+Tableau Public으로 핵심 지표를 시각화했습니다.
+
+**대시보드 사용 방법**:
+1. Tableau Public Desktop 설치 (무료)
+2. `analysis/data/` 폴더의 Tableau용 CSV 파일 로드:
+   - `tableau_summary.csv` - 채널별 집계
+   - `tableau_daily.csv` - 일별 트렌드
+   - `tableau_campaign.csv` - 캠페인 상세
+
+**추천 차트**:
+- 채널별 ROAS 비교 (Bar Chart)
+- 일별 ROAS 추이 (Line Chart)
+- 캠페인 성과 매트릭스 (Bubble Chart)
+
+자세한 가이드: [`analysis/TABLEAU_GUIDE.md`](./analysis/TABLEAU_GUIDE.md)
+
 ### 핵심 인사이트
 
 - Naver Ads ROAS(3.28)가 Google(2.77), Facebook(2.05) 대비 최고 효율
 - ROAS 가중 예산 재배분으로 동일 예산 대비 **+4.3% 매출 증가** 가능
+- A/B 테스트 결과 새 소재로 CTR +25%, ROAS +10% 개선
 - 상세 내용: [`analysis/report/executive_summary.md`](./analysis/report/executive_summary.md)
 
 ## Tech Stack
