@@ -12,6 +12,7 @@
 ## Interactive Dashboard
 
 **[Live Demo](https://dashboard-kappa-self-57.vercel.app)** - Chart.js 기반 인터랙티브 대시보드 (Vercel 배포)
+**[Tableau Public Dashboard](https://public.tableau.com/views/MarketingROI/Dashboard1)** - Tableau Public 인터랙티브 대시보드
 
 - KPI 카드 4개 (Total Spend, Revenue, ROAS, Conversions)
 - 채널별 ROAS 바 차트 + 매출 비중 도넛 차트

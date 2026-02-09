@@ -2,6 +2,50 @@
 
 마케팅 ROI 분석을 인터랙티브하게 탐색할 수 있는 Tableau Public 대시보드 제작 가이드입니다.
 
+## 배포 로드맵
+
+> **Tableau Public URL**: `https://public.tableau.com/views/MarketingROI/Dashboard1`
+> *(게시 후 실제 URL로 교체)*
+
+### Step 1: 환경 준비 (~10분)
+- [ ] Tableau Public Desktop 설치 ([다운로드](https://www.tableau.com/products/public/download))
+- [ ] Tableau Public 계정 생성 + 이메일 인증
+- [ ] 프로필 정보 입력 (포트폴리오 노출용)
+> *스크린샷*: `docs/screenshots/tableau_01_setup.png`
+
+### Step 2: 데이터 로드 + 전처리 (~15분)
+- [ ] `analysis/data/tableau_summary.csv` 로드 → 채널 집계 시트
+- [ ] `analysis/data/tableau_daily.csv` 로드 → 일별 트렌드 시트
+- [ ] `analysis/data/tableau_campaign.csv` 로드 → 캠페인 상세 시트
+- [ ] 날짜 컬럼 타입 확인 (Date로 자동 인식 여부)
+- [ ] Extract 생성 (성능 최적화)
+> *스크린샷*: `docs/screenshots/tableau_02_data_load.png`
+
+### Step 3: 대시보드 제작 (~30분)
+- [ ] 워크시트 1: 채널별 ROAS 비교 (Bar Chart)
+- [ ] 워크시트 2: 일별 ROAS 추이 (Line Chart + 7일 이동평균)
+- [ ] 워크시트 3: 캠페인 성과 매트릭스 (Bubble Chart)
+- [ ] KPI 카드 (Total Spend, Revenue, ROAS, CTR)
+- [ ] 필터 추가 (Channel, Date Range)
+- [ ] 채널 색상 고정 (Google=#4285F4, Facebook=#1877F2, Naver=#03C75A)
+> *스크린샷*: `docs/screenshots/tableau_03_dashboard.png`
+
+### Step 4: 게시 (~5분)
+- [ ] File → Save to Tableau Public → 로그인
+- [ ] 제목: "Marketing ROI Analysis Dashboard"
+- [ ] 설명 추가: 분석 목적, 데이터 기간, 핵심 인사이트
+- [ ] 게시 완료 → URL 복사
+> *스크린샷*: `docs/screenshots/tableau_04_publish.png`
+
+### Step 5: README + 포트폴리오 연동 (~5분)
+- [ ] `README.md` Interactive Dashboard 섹션에 Tableau Public URL 추가
+- [ ] GitHub 저장소 About에 Tableau 링크 추가
+- [ ] LinkedIn/포트폴리오 사이트에 임베드 또는 링크 추가
+
+**총 예상 소요시간: 약 65분**
+
+---
+
 ## 준비 사항
 
 ### 1. Tableau Public Desktop 설치
