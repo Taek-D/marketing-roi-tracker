@@ -9,6 +9,29 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.8.0] - 2026-02-10
+
+### Changed — 프로젝트 구조 개선 + 통합 실행 로드맵
+
+#### GAS 코드 `automation/` 디렉토리 분리
+- 6개 `.gs` 파일 + `appsscript.json` → `automation/` 디렉토리로 이동 (`git mv`)
+- `auth_setup_instructions.md`, `naver_setup_guide.md` → `automation/`으로 이동
+- `.clasp.json`: `rootDir` → `"automation"` 변경
+- `.github/workflows/validate.yml`: 경로 `*.gs` → `automation/*.gs` 반영
+- `CLAUDE.md`, `README.md`: Project Structure 경로 업데이트
+
+#### 통합 실행 로드맵 생성
+- **`analysis/report/action_roadmap.md`** (신규): 3단계 액션 플랜 + Guard Rail + 시나리오 분석 통합
+  - Phase 1 (즉시): ROAS 가중 예산 재배분, Naver Brand 증액
+  - Phase 2 (단기): Facebook CAPI, Google Generic 정교화
+  - Phase 3 (중기): Guard Rail 대시보드, A/B 테스트, 시즌 예산 계획
+  - Guard Rail 기준표: 채널별 ROAS 하한, CPA 상한, 일 예산 상한 (KRW)
+  - 3시나리오 수치: Conservative -3.1%, Base +4.3%, Optimistic +11.8%
+- `executive_summary.md`: 로드맵 참조 링크 추가
+- `README.md`: 주요 발견 섹션에 로드맵 링크 추가
+
+---
+
 ## [0.7.0] - 2026-02-09
 
 ### Added — Supabase SQL 분석 + 인터랙티브 대시보드 배포

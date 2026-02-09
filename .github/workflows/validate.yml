@@ -3,10 +3,10 @@ name: Validate GAS Code
 on:
   push:
     branches: [master, main]
-    paths: ['*.gs']
+    paths: ['automation/*.gs']
   pull_request:
     branches: [master, main]
-    paths: ['*.gs']
+    paths: ['automation/*.gs']
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
         run: |
           echo "Checking .gs files for syntax errors..."
           errors=0
-          for file in *.gs; do
+          for file in automation/*.gs; do
             cp "$file" "${file%.gs}.js"
             if node --check "${file%.gs}.js" 2>/dev/null; then
               echo "PASS: $file"
@@ -44,7 +44,7 @@ jobs:
       - name: Check for hardcoded secrets
         run: |
           echo "Scanning for hardcoded secrets..."
-          if grep -rn --include="*.gs" -iE '^\s*[^/\*]*(api_key|access_token|secret|password)\s*[:=]\s*["'"'"'][A-Za-z0-9]' *.gs; then
+          if grep -rn --include="*.gs" -iE '^\s*[^/\*]*(api_key|access_token|secret|password)\s*[:=]\s*["'"'"'][A-Za-z0-9]' automation/*.gs; then
             echo "WARNING: Possible hardcoded secrets found"
             exit 1
           fi

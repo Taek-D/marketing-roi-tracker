@@ -18,8 +18,8 @@ name: API Integrator
 - 응답 데이터 파싱 방법 파악
 
 ### 코드 작성
-- Code.gs에 `fetch{Platform}Data()` 함수 추가
-- Config.gs에 새 플랫폼 설정 추가
+- automation/Code.gs에 `fetch{Platform}Data()` 함수 추가
+- automation/Config.gs에 새 플랫폼 설정 추가
 - main()에 호출 추가
 
 ### 준수 사항
