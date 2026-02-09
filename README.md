@@ -122,7 +122,6 @@ marketing-roi-tracker/
 │   └── validate.yml        # CI: 구문 검사 + 시크릿 스캔
 ├── .mcp.json               # MCP 서버 설정
 ├── docs/
-│   ├── dashboard_mockup.html      # 대시보드 미리보기 (HTML)
 │   └── screenshots/
 │       └── dashboard_preview.png  # 대시보드 스크린샷
 ├── analysis/                   # 마케팅 ROI 심층 분석
@@ -139,7 +138,6 @@ marketing-roi-tracker/
 ├── dashboard/                  # 인터랙티브 대시보드 (Vercel 배포)
 │   └── index.html                  # Chart.js 기반 인터랙티브 대시보드
 ├── PRD.md                  # 제품 요구사항 문서
-├── blueprint.md            # 프로젝트 블루프린트 (API 스펙)
 ├── auth_setup_instructions.md  # Google/Facebook 인증 가이드
 └── naver_setup_guide.md    # 네이버 검색광고 API 연동 가이드
 ```
