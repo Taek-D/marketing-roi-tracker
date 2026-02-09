@@ -261,23 +261,23 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>MarketingROI Tracker Dashboard</h1>
+        <h1>마케팅 ROI 대시보드</h1>
         <div class="header-meta">
-            <span id="headerPeriod">Period: 2024-10-01 ~ 2024-12-29 (90 days)</span>
-            <span id="headerChannels">Channels: Google Ads, Facebook Ads, Naver Ads</span>
-            <span id="headerData">Data: 810 rows (3 channels x 3 campaigns x 90 days)</span>
+            <span id="headerPeriod">기간: 2024-10-01 ~ 2024-12-29 (90일)</span>
+            <span id="headerChannels">채널: Google Ads, Facebook Ads, Naver Ads</span>
+            <span id="headerData">데이터: 810행 (3채널 x 3캠페인 x 90일)</span>
         </div>
     </div>
 
     <div class="container">
         <!-- Data Badge -->
         <div class="data-badge">
-            <strong>Data Source:</strong> generate_data.py (12 marketing patterns, seed=42) | Supabase PostgreSQL
+            <strong>데이터 소스:</strong> generate_data.py (12개 마케팅 패턴, seed=42) | Supabase PostgreSQL
         </div>
 
         <!-- Filter Bar -->
         <div class="filter-bar">
-            <span class="filter-label">Channel</span>
+            <span class="filter-label">채널</span>
             <div class="channel-toggles">
                 <button class="ch-toggle active" data-ch="Google" style="color:#EA4335;--ch-light:rgba(234,67,53,0.1)">
                     <span class="dot" style="background:#EA4335"></span>Google Ads
@@ -289,46 +289,46 @@
                     <span class="dot" style="background:#03c75a"></span>Naver Ads
                 </button>
             </div>
-            <span class="filter-label" style="margin-left:8px">Period</span>
+            <span class="filter-label" style="margin-left:8px">기간</span>
             <div class="date-range">
                 <input type="date" id="startDate" value="2024-10-01" min="2024-10-01" max="2024-12-29">
                 <span>~</span>
                 <input type="date" id="endDate" value="2024-12-29" min="2024-10-01" max="2024-12-29">
             </div>
-            <button class="filter-reset" onclick="resetFilters()">Reset</button>
-            <div class="filter-summary" id="filterSummary">Showing all 3 channels | 90 days | 810 data points</div>
+            <button class="filter-reset" onclick="resetFilters()">초기화</button>
+            <div class="filter-summary" id="filterSummary">전체 3개 채널 | 90일 | 810개 데이터</div>
         </div>
 
         <!-- KPI Cards -->
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="kpi-value" id="kpiSpend">$164,170</div>
-                <div class="kpi-label">Total Spend</div>
+                <div class="kpi-label">총 광고비</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-value" id="kpiRevenue">$437,128</div>
-                <div class="kpi-label">Total Revenue</div>
+                <div class="kpi-label">총 매출</div>
             </div>
             <div class="kpi-card highlight">
                 <div class="kpi-value" id="kpiRoas">2.66</div>
-                <div class="kpi-label">Avg ROAS</div>
+                <div class="kpi-label">평균 ROAS</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-value" id="kpiConversions">31,481</div>
-                <div class="kpi-label">Total Conversions</div>
+                <div class="kpi-label">총 전환수</div>
             </div>
         </div>
 
         <!-- Row 1: ROAS Bar + Revenue Pie -->
         <div class="chart-row">
             <div class="chart-card">
-                <div class="chart-title">Channel ROAS Comparison <span class="badge">Interactive</span></div>
+                <div class="chart-title">채널별 ROAS 비교 <span class="badge">인터랙티브</span></div>
                 <div class="chart-container medium">
                     <canvas id="roasBarChart"></canvas>
                 </div>
             </div>
             <div class="chart-card">
-                <div class="chart-title">Revenue Share by Channel <span class="badge">Interactive</span></div>
+                <div class="chart-title">채널별 매출 비중 <span class="badge">인터랙티브</span></div>
                 <div class="chart-container medium">
                     <canvas id="revenuePieChart"></canvas>
                 </div>
@@ -338,7 +338,7 @@
         <!-- Row 2: Daily ROAS Line (Full Width) -->
         <div class="chart-row">
             <div class="chart-card full">
-                <div class="chart-title">Daily ROAS Trend + 7-Day Moving Average <span class="badge">90 Days</span></div>
+                <div class="chart-title">일별 ROAS 추이 + 7일 이동평균 <span class="badge">90일</span></div>
                 <div class="chart-container tall">
                     <canvas id="roasLineChart"></canvas>
                 </div>
@@ -348,22 +348,22 @@
         <!-- Row 3: Campaign Matrix + Funnel Table -->
         <div class="chart-row">
             <div class="chart-card">
-                <div class="chart-title">Campaign Performance (Cost vs Revenue) <span class="badge">Bubble</span></div>
+                <div class="chart-title">캠페인 성과 (비용 vs 매출) <span class="badge">Bubble</span></div>
                 <div class="chart-container medium">
                     <canvas id="campaignBubbleChart"></canvas>
                 </div>
             </div>
             <div class="chart-card">
-                <div class="chart-title">Funnel Metrics by Channel</div>
+                <div class="chart-title">채널별 퍼널 지표</div>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Channel</th>
+                            <th>채널</th>
                             <th>CTR (%)</th>
                             <th>CVR (%)</th>
                             <th>CPA ($)</th>
                             <th>ROAS</th>
-                            <th>Status</th>
+                            <th>상태</th>
                         </tr>
                     </thead>
                     <tbody id="funnelBody"></tbody>
@@ -374,8 +374,8 @@
 
     <!-- Footer -->
     <div class="footer">
-        <p>MarketingROI Tracker v0.7.0 | Google Apps Script + Supabase PostgreSQL</p>
-        <p>Built with Chart.js | <a href="https://github.com/Taek-D/marketing-roi-tracker" target="_blank">GitHub Repository</a></p>
+        <p>마케팅 ROI Tracker v0.7.0 | Google Apps Script + Supabase PostgreSQL</p>
+        <p>Chart.js 기반 | <a href="https://github.com/Taek-D/marketing-roi-tracker" target="_blank">GitHub Repository</a></p>
     </div>
 
     <script>
@@ -442,13 +442,13 @@
         document.getElementById('kpiConversions').textContent = totalConv.toLocaleString();
 
         // Header meta
-        document.getElementById('headerPeriod').textContent = 'Period: ' + startDate + ' ~ ' + endDate + ' (' + days + ' days)';
-        document.getElementById('headerChannels').textContent = 'Channels: ' + channels.map(c => c + ' Ads').join(', ');
-        document.getElementById('headerData').textContent = 'Data: ' + (fd.length * 3) + ' rows (' + channels.length + ' channels x 3 campaigns x ' + days + ' days)';
+        document.getElementById('headerPeriod').textContent = '기간: ' + startDate + ' ~ ' + endDate + ' (' + days + '일)';
+        document.getElementById('headerChannels').textContent = '채널: ' + channels.map(c => c + ' Ads').join(', ');
+        document.getElementById('headerData').textContent = '데이터: ' + (fd.length * 3) + '행 (' + channels.length + '채널 x 3캠페인 x ' + days + '일)';
 
         // Filter summary
         document.getElementById('filterSummary').textContent =
-            'Showing ' + channels.length + ' channel' + (channels.length !== 1 ? 's' : '') + ' | ' + days + ' days | ' + fd.length + ' daily data points';
+            channels.length + '개 채널 | ' + days + '일 | ' + fd.length + '개 일별 데이터';
 
         // 1. ROAS Bar Chart
         const barLabels = channels.map(ch => ch + ' Ads');
@@ -484,12 +484,12 @@
             var ma7d = compute7dMA(dailyRoas);
             var col = COLORS[ch];
             lineDatasets.push({
-                label: ch + ' Daily', data: dailyRoas,
+                label: ch + ' 일별', data: dailyRoas,
                 borderColor: col.bg, backgroundColor: col.light,
                 borderWidth: 1, pointRadius: 0, tension: 0.3, fill: false
             });
             lineDatasets.push({
-                label: ch + ' 7d MA', data: ma7d,
+                label: ch + ' 7일 평균', data: ma7d,
                 borderColor: col.bg, backgroundColor: col.bg,
                 borderWidth: 2.5, pointRadius: 0, tension: 0.4, fill: false
             });
@@ -530,9 +530,9 @@
             var cpa = r.cv > 0 ? (r.co / r.cv).toFixed(2) : '-';
             var roas = r.co > 0 ? (r.rv / r.co).toFixed(2) : '0.00';
             var roasVal = parseFloat(roas);
-            var tag = 'tag-warn', label = 'Improve';
-            if (roasVal >= maxRoas * 0.95) { tag = 'tag-best'; label = 'Best'; }
-            else if (roasVal >= 2.5) { tag = 'tag-good'; label = 'Good'; }
+            var tag = 'tag-warn', label = '개선 필요';
+            if (roasVal >= maxRoas * 0.95) { tag = 'tag-best'; label = '최고'; }
+            else if (roasVal >= 2.5) { tag = 'tag-good'; label = '양호'; }
             var color = COLORS[r.ch] ? COLORS[r.ch].bg : '#666';
             return '<tr>' +
                 '<td><strong style="color:' + color + '">' + r.ch + ' Ads</strong></td>' +
@@ -578,7 +578,7 @@
             plugins: {
                 legend: {
                     position: 'top',
-                    labels: { usePointStyle: true, pointStyle: 'line', padding: 12, filter: function(item) { return item.text.includes('7d MA'); } }
+                    labels: { usePointStyle: true, pointStyle: 'line', padding: 12, filter: function(item) { return item.text.includes('7일 평균'); } }
                 },
                 tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.raw.toFixed(2) + 'x'; } } }
             },
@@ -599,13 +599,13 @@
                 tooltip: { callbacks: {
                     label: function(ctx) {
                         var d = ctx.raw;
-                        return [ctx.dataset.label, 'Cost: $' + (d.x*1000).toLocaleString(), 'Revenue: $' + (d.y*1000).toLocaleString(), 'ROAS: ' + (d.r/4).toFixed(2) + 'x'];
+                        return [ctx.dataset.label, '비용: $' + (d.x*1000).toLocaleString(), '매출: $' + (d.y*1000).toLocaleString(), 'ROAS: ' + (d.r/4).toFixed(2) + 'x'];
                     }
                 } }
             },
             scales: {
-                x: { title: { display: true, text: 'Cost ($K)', font: { size: 12 } }, grid: { color: '#f1f3f4' } },
-                y: { title: { display: true, text: 'Revenue ($K)', font: { size: 12 } }, grid: { color: '#f1f3f4' } }
+                x: { title: { display: true, text: '비용 ($K)', font: { size: 12 } }, grid: { color: '#f1f3f4' } },
+                y: { title: { display: true, text: '매출 ($K)', font: { size: 12 } }, grid: { color: '#f1f3f4' } }
             }
         }
     });
