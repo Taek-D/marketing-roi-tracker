@@ -1,62 +1,143 @@
-# MarketingROI Tracker
+# 마케팅 ROI 최적화 분석
 
-> Google Ads, Facebook Ads, 네이버 검색광고 데이터를 자동 수집하여 ROAS를 분석하고 예산 최적화를 제안하는 멀티채널 마케팅 ROI 대시보드
+> 3채널 디지털 광고(Google Ads, Facebook Ads, Naver Ads) 90일 데이터를 분석하여,
+> **ROAS 가중 예산 재배분으로 동일 예산 대비 +4.3% 매출 증가**가 가능함을 검증한 프로젝트
 
-## Dashboard Preview
+## 핵심 질문
 
-![Dashboard Preview](docs/screenshots/dashboard_preview.png)
+중소 이커머스 기업이 월 ₩7,500만을 3개 채널에 집행하고 있으나, **채널별 실제 수익 기여도**와 **최적 예산 배분**에 대한 데이터 기반 근거가 부재합니다. 이 프로젝트는 세 가지 의사결정 질문에 데이터로 답합니다:
 
-## Interactive Dashboard
+| # | 질문 | 분석 방법 | 결론 |
+|---|------|----------|------|
+| Q1 | 채널별 ROAS 차이가 통계적으로 유의미한가? | One-Way ANOVA | **유의 (F=229.5, p < 0.001)** — Naver(3.28) > Google(2.77) > Facebook(2.05) |
+| Q2 | 광고비를 늘리면 매출도 비례해서 늘어나는가? | 로그 vs 선형 회귀 R² + 5-Fold CV | **비례하지 않음** — 체감수익(Diminishing Returns) 확인 |
+| Q3 | 동일 예산으로 매출을 더 올릴 수 있는가? | ROAS 가중 예산 시뮬레이션 | **가능** — 재배분만으로 +4.3% (약 ₩2,600만) 증가 |
 
-| 대시보드 | 기술 | 링크 |
-|----------|------|------|
-| **Chart.js 대시보드** | Chart.js + Vercel 배포 | [Live Demo](https://dashboard-kappa-self-57.vercel.app) |
-| **Tableau Public** | Tableau Public 배포 | [Dashboard](https://public.tableau.com/views/MarketingROI/Dashboard1) |
+## 분석 프레임워크
 
-- KPI 카드 4개 (Total Spend, Revenue, ROAS, Conversions)
-- 채널별 ROAS 바 차트 + 매출 비중 도넛 차트
-- 90일 일별 ROAS 추이 + 7일 이동평균 라인 차트
-- 캠페인 성과 매트릭스 (버블 차트)
-- 퍼널 지표 테이블 (CTR, CVR, CPA)
+```
+문제 정의: "3채널 예산 배분이 최적인가?"
+    │
+    ├─ Q1. 채널 효율 차이 검증
+    │   ├─ EDA: 채널별 ROAS 분포 탐색 → 시각적 격차 확인
+    │   ├─ 가설: "3채널 ROAS 평균은 동일하다" (H₀)
+    │   ├─ 검정: One-Way ANOVA → F=229.5, p<0.001 → H₀ 기각
+    │   └─ 결론: 채널 간 ROAS 차이는 통계적으로 유의
+    │
+    ├─ Q2. 체감수익 구조 확인
+    │   ├─ 가설: "광고비↑ = 매출 비례↑" (선형 관계)
+    │   ├─ 검정: 선형/로그/다항 3모델 R² 비교 + 5-Fold 교차검증
+    │   ├─ 결과: 로그/다항식 모델이 선형보다 우세 (CV R² 기준)
+    │   ├─ 잔차: Shapiro-Wilk 정규성 충족, Durbin-Watson 자기상관 존재
+    │   └─ 결론: 단일 채널 과잉투자보다 다채널 분산이 유리
+    │
+    ├─ Q3. 최적 예산 배분 도출
+    │   ├─ 방법: ROAS 가중치 기반 재배분 시뮬레이션
+    │   ├─ 결과: Naver 31%→40%, Facebook 35%→25%, Google 유지
+    │   ├─ 효과: 동일 예산 대비 +4.3% 매출 증가
+    │   └─ 교차 검증: SQL(Supabase)에서 독립 계산 → +4.4%로 일치
+    │
+    └─ 추가 분석
+        ├─ 멀티터치 어트리뷰션: 5모델 비교 → 모델 선택이 매출 귀속 최대 30% 변동
+        ├─ 퍼널 분석: Facebook은 CTR 병목, Naver는 CVR 병목
+        └─ ARIMA 예측: 30일 ROAS 예측 + 95% 신뢰구간
+```
 
-## Key Insights
+## 주요 발견
 
-| # | 발견 | 수치 | 비즈니스 액션 |
-|---|------|------|---------------|
-| 1 | Naver Ads가 최고 효율 채널 | ROAS 3.28 (vs Google 2.77, Facebook 2.05) | 예산 30.9% → 40.4% 증액 |
-| 2 | 체감수익 구조 확인 | 로그 R² > 선형 R² | 다채널 분산 투자 유리 |
-| 3 | 예산 재배분 효과 | 동일 예산 대비 **+4.3% 매출 증가** | ROAS 가중 월별 리밸런싱 |
-| 4 | Brand 캠페인 최고 효율 | ROAS 3.5~4.0 (전 채널 1위) | Brand 키워드 방어 예산 우선 확보 |
-| 5 | 애트리뷰션 모델별 최대 30% 차이 | 5모델 비교 | 복수 모델 교차 검증 도입 |
+| # | 발견 | 근거 | 실행 제안 |
+|---|------|------|----------|
+| 1 | **Naver Ads ROAS 3.28로 최고 효율** | ANOVA p<0.001, CPA $3.98 최저 | 예산 30.9% → 40.4% 증액 |
+| 2 | **전 채널 체감수익 확인** | 로그 R² > 선형 R², 5-Fold CV 검증 | 다채널 분산 투자 전략 |
+| 3 | **Brand 캠페인이 전 채널 ROAS 1위** | ROAS 3.5~4.0, RANK() OVER 9개 캠페인 비교 | Brand 키워드 방어 예산 우선 확보 |
+| 4 | **어트리뷰션 모델별 매출 귀속 최대 30% 차이** | 5모델(Last/First/Linear/Decay/Position) 비교 | 복수 모델 교차 검증 도입 |
+| 5 | **블랙프라이데이 전 채널 ROAS 2~3배 급등** | Z-score 이상치 14건 탐지 (|Z|>2) | 시즌 이벤트 사전 예산 확보 |
 
 > 상세 분석: [`analysis/report/executive_summary.md`](./analysis/report/executive_summary.md)
 
-## Features
+### 통계적으로 확인되지 않은 패턴
 
-- **자동 데이터 수집**: Google Ads / Facebook Ads / 네이버 검색광고에서 매일 오전 9시(KST) 자동 수집
-- **ROAS 대시보드**: 채널별 Spend, Revenue, ROAS를 한눈에 비교
-- **Multi-Touch 애트리뷰션**: 5가지 모델 비교 (Last-Touch, First-Touch, Linear, Time-Decay, Position-Based)
-- **마케팅 퍼널 분석**: CTR, CVR, CPA, CPM 등 퍼널 단계별 핵심 지표 자동 산출
-- **이상치 탐지**: Z-score 기반 ROAS 이상치 실시간 감지 + Slack 알림
-- **주간 자동 리포트**: 주간 성과 요약 + 전주 대비 변화율 Slack 발송
-- **시계열 예측**: ARIMA / Holt-Winters 모델로 30일 ROAS 예측 (Python 노트북)
-- **SQL 분석**: Supabase PostgreSQL에서 Window Function, CTE, Z-score 등 고급 SQL 분석
-- **인터랙티브 대시보드**: Chart.js 기반 (Vercel 배포) + Tableau Public
-- **CI/CD**: `.gs` 파일 변경 시 자동 구문 검사 + 시크릿 스캔
-- **Unit Tests**: 핵심 비즈니스 로직 단위 테스트 (30개 테스트 케이스)
+| 패턴 | 관찰 | 검정 결과 | 향후 과제 |
+|------|------|----------|----------|
+| 주중/주말 ROAS 차이 | 히트맵에서 요일별 차이 관찰 | t-test 3채널 모두 p > 0.05 (비유의) | 180일+ 데이터 축적 후 재검증 |
+| Day-parting 효과 | 시간대별 패턴 가능성 | 시간별 데이터 미보유 | GA4 시간별 데이터 연동 필요 |
+
+## Interactive Dashboard
+
+| 대시보드 | 링크 |
+|----------|------|
+| **Chart.js** (필터링 + PNG/PDF Export) | [Live Demo](https://dashboard-kappa-self-57.vercel.app) |
+| **Tableau Public** | [Dashboard](https://public.tableau.com/views/MarketingROI/Dashboard1) |
+
+![Dashboard Preview](docs/screenshots/dashboard_preview.png)
+
+## 분석 노트북 (3개)
+
+### 기본 분석 — [`MarketingROI_Analysis.ipynb`](./analysis/MarketingROI_Analysis.ipynb)
+
+> 가설 주도형 분석: EDA → 통계 검정 → 회귀 모델링 → 예산 최적화
+
+| 단계 | 질문 | 방법 | 핵심 결과 |
+|------|------|------|----------|
+| EDA | 채널/캠페인별 효율 차이가 있는가? | Grouped Bar, Bubble Chart, Heatmap | Naver > Google > Facebook, Brand > Retargeting > Generic |
+| 통계 검정 | 채널 간 차이가 우연인가? | ANOVA, 독립표본 t-test | 채널 간 유의 (p<0.001), 주중/주말 비유의 (p>0.05) |
+| 회귀 분석 | 광고비-매출 관계의 형태는? | 선형/로그/다항 R² + 5-Fold CV + 잔차 분석 | 체감수익 구조, 잔차 정규성 충족 |
+| 최적화 | 최적 예산 배분은? | ROAS 가중 시뮬레이션 | +4.3% 매출 증가 (약 ₩2,600만) |
+| 이상치 | 비정상 성과는 언제? | Z-score (|Z|>2) | 14건 탐지 (BF 급등, FB 추적 장애 급락) |
+
+### 고급 분석 — [`MarketingROI_Advanced_Analysis.ipynb`](./analysis/MarketingROI_Advanced_Analysis.ipynb)
+
+> 기본 분석의 한계를 보완: "Last-Touch만으로 충분한가?", "퍼널 어디가 병목인가?", "향후 추세는?"
+
+| 분석 | 기본 분석의 한계 | 고급 분석의 답 |
+|------|----------------|---------------|
+| 멀티터치 어트리뷰션 5모델 | Last-Touch 의존 → 채널 기여 왜곡 | 모델 선택이 예산 배분을 최대 30% 변동시킴 |
+| 마케팅 퍼널 분석 | "왜 차이나는가?" 미답변 | Facebook은 CTR 병목 (3.94%), Naver는 CVR 개선 여지 |
+| ARIMA 시계열 예측 | 과거 해석만 수행 | ADF 정상성 확인 → ARIMA(2,1,2) 30일 예측 + 95% 신뢰구간 |
+
+### SQL 분석 — [`MarketingROI_SQL_Analysis.ipynb`](./analysis/MarketingROI_SQL_Analysis.ipynb)
+
+> Supabase PostgreSQL에서 고급 SQL로 Python 분석 결과를 독립적으로 교차 검증
+
+| SQL 기법 | 분석 | Python 분석과의 교차 검증 |
+|----------|------|--------------------------|
+| `GROUP BY` + 집계 함수 | 채널별 KPI 요약 | ROAS 순위 일치 (Naver > Google > FB) |
+| `AVG() OVER (ROWS BETWEEN)` | 7일 이동평균 | pandas rolling과 동일 결과 |
+| `RANK() OVER (PARTITION BY)` | 캠페인 랭킹 | Naver_Brand 전체 1위 일치 |
+| CTE + `STDDEV() OVER` | Z-score 이상치 | 14건 동일 탐지 |
+| 다단계 CTE + `CROSS JOIN` | 예산 시뮬레이션 | +4.4% (Python +4.3%와 일치) |
+
+## 분석의 한계와 향후 과제
+
+| 한계 | 영향 | 보완 방법 |
+|------|------|----------|
+| **시뮬레이션 데이터** | 12가지 실무 패턴을 반영했으나 실제 마케팅 데이터의 복잡성에 미달 | 실 데이터 적용 시 모델 재학습 필요 |
+| **주중/주말 효과 비유의** | t-test 3채널 모두 p > 0.05로 통계적 확인 실패 | 검정력 분석(Power Analysis) + 샘플 확대 |
+| **단일 접점 퍼널** | 크로스디바이스·오프라인 전환 미반영 | GA4 + CRM 데이터 연동 |
+| **외부 변수 미반영** | 경쟁사 활동, 거시경제 미포함 | SARIMAX 외생변수 모델 확장 |
+| **고정 ROAS 가중치** | 시간에 따른 채널 효율 변동 미반영 | Rolling Window 기반 동적 최적화 |
+
+## 자동화 시스템
+
+분석 인사이트를 운영에 반영하기 위한 **Google Apps Script 자동화**를 포함합니다:
+
+- **자동 데이터 수집**: 매일 9시(KST) 3채널 API → Google Sheets 적재
+- **Multi-Touch 어트리뷰션**: 5모델 자동 계산 (Attribution.gs)
+- **Z-score 이상치 탐지**: ROAS 이상 시 Slack 즉시 알림 (Report.gs)
+- **주간 리포트**: WoW 비교 성과 자동 발송 (Report.gs)
+- **단위 테스트**: 핵심 비즈니스 로직 30개 테스트 (Tests.gs)
+- **CI/CD**: GitHub Actions 구문 검사 + 시크릿 스캔
 
 ## Tech Stack
 
 | 영역 | 기술 |
 |------|------|
-| 자동화 | Google Apps Script (ES6), clasp |
-| API | Google Ads API v18, Facebook Marketing API v21, Naver Search Ads API |
-| 데이터 분석 | Python (pandas, scipy, scikit-learn, statsmodels) |
+| 데이터 분석 | Python (pandas, scipy, statsmodels, scikit-learn) |
 | SQL | Supabase PostgreSQL (Window Function, CTE, Z-score) |
 | 시각화 | matplotlib, seaborn, Chart.js, Tableau Public |
-| 대시보드 | Google Sheets, Chart.js (Vercel 배포) |
-| 알림 | Slack Webhook |
-| CI/CD | GitHub Actions |
+| 자동화 | Google Apps Script (ES6), clasp |
+| API | Google Ads API v18, Facebook Marketing API v21, Naver Search Ads API |
+| 배포 | Vercel (대시보드), GitHub Actions (CI) |
 
 ## Project Structure
 
@@ -77,7 +158,7 @@ marketing-roi-tracker/
 │   ├── generate_data.py                      # 실무급 시뮬레이션 데이터 생성기
 │   ├── export_for_tableau.py                 # Tableau용 CSV Export
 │   ├── requirements.txt                      # Python 의존성
-│   ├── TABLEAU_GUIDE.md                      # Tableau Public 배포 로드맵 + 가이드
+│   ├── TABLEAU_GUIDE.md                      # Tableau Public 배포 가이드
 │   ├── data/
 │   │   ├── marketing_raw_data.csv            # 90일 x 3채널 x 3캠페인 (810행)
 │   │   ├── tableau_summary.csv               # 채널별 집계
@@ -90,9 +171,8 @@ marketing-roi-tracker/
 ├── dashboard/                  # 인터랙티브 대시보드
 │   └── index.html              # Chart.js 기반 (Vercel 배포)
 │
-├── docs/
-│   └── screenshots/
-│       └── dashboard_preview.png
+├── docs/screenshots/
+│   └── dashboard_preview.png
 │
 ├── .github/workflows/
 │   └── validate.yml            # CI: 구문 검사 + 시크릿 스캔
@@ -114,60 +194,7 @@ git clone https://github.com/Taek-D/marketing-roi-tracker.git
 cd marketing-roi-tracker
 ```
 
-### 2. clasp 설치 및 로그인
-
-```bash
-npm install -g @google/clasp
-clasp login
-```
-
-> Apps Script API를 먼저 활성화하세요: https://script.google.com/home/usersettings
-
-### 3. Google Sheet + Apps Script 생성
-
-```bash
-clasp create --title "MarketingROI Tracker" --type sheets
-clasp push
-```
-
-### 4. 초기 설정 실행
-
-1. Apps Script 에디터 열기: `clasp open`
-2. 함수 드롭다운에서 **setupAll** 선택
-3. **실행 (▶)** 클릭
-4. 권한 승인: 계정 선택 → "고급" → "프로젝트로 이동" → "허용"
-
-이렇게 하면 한 번에:
-- 시트 4개 생성 (Raw Data, Attribution, Dashboard, Config)
-- 30일치 테스트 데이터 삽입 (3채널 x 3캠페인)
-- 애트리뷰션 계산 + 대시보드 반영
-- 매일 오전 9시 자동 실행 트리거 설정
-
-### 5. 실제 API 연결 (선택)
-
-`Extensions > Apps Script > Project Settings > Script Properties`에서 입력:
-
-| Property | 설명 | 필수 |
-|----------|------|:----:|
-| `GOOGLE_ADS_CUSTOMER_ID` | Google Ads 고객 ID (예: 123-456-7890) | Yes |
-| `GOOGLE_ADS_DEVELOPER_TOKEN` | Google Ads API 개발자 토큰 | Yes |
-| `GOOGLE_ADS_REFRESH_TOKEN` | OAuth2 Refresh Token | Yes |
-| `FB_AD_ACCOUNT_ID` | Facebook 광고 계정 ID (예: act_123456) | Yes |
-| `FB_ACCESS_TOKEN` | Facebook 장기 액세스 토큰 (60일 또는 System User) | Yes |
-| `NAVER_ADS_CUSTOMER_ID` | 네이버 검색광고 광고주 ID | No |
-| `NAVER_ADS_API_KEY` | 네이버 검색광고 API Key | No |
-| `NAVER_ADS_SECRET_KEY` | 네이버 검색광고 Secret Key | No |
-| `SLACK_WEBHOOK_URL` | Slack 에러 알림용 Webhook URL | No |
-
-> 상세 인증 가이드: [auth_setup_instructions.md](./auth_setup_instructions.md) | 네이버 연동 가이드: [naver_setup_guide.md](./naver_setup_guide.md)
-
-## Data Analysis
-
-### 데이터 특징
-
-**실무급 시뮬레이션 데이터** — 12가지 실무 패턴(채널 효율성, 요일 효과, 광고 피로도, A/B 테스트, 계절성 등)과 비즈니스 이벤트(블랙프라이데이, Facebook 추적 장애)를 반영한 810행 데이터셋입니다.
-
-### 분석 실행
+### 2. 분석 노트북 실행
 
 ```bash
 cd analysis
@@ -176,107 +203,18 @@ python generate_data.py
 jupyter notebook
 ```
 
-### 분석 노트북 (3개)
+### 3. GAS 자동화 배포 (선택)
 
-**기본 분석** — `MarketingROI_Analysis.ipynb` (30셀, 차트 10개)
-
-| 섹션 | 분석 | 주요 기법 |
-|------|------|----------|
-| EDA | 채널별 성과, ROAS 추이, 캠페인 매트릭스 | Grouped Bar, Multi-Line, Bubble |
-| 심층 분석 | 요일별 패턴, 체감수익 분석 | Heatmap, Scatter + Log Curve |
-| 통계 검정 | t-test (주중/주말), ANOVA (채널 간) | Box Plot + p-value |
-| 회귀 분석 | 선형 vs 로그 vs 다항식 모델 비교 | R² 비교, Multi-fit Scatter |
-| 예산 최적화 | ROAS 기반 최적 배분, 한계 ROAS | Dual Bar, Line + Threshold |
-| 이상치 탐지 | Z-score 기반 이상치 식별 | Timeline + Markers |
-
-**고급 분석** — `MarketingROI_Advanced_Analysis.ipynb` (12셀, 차트 3개)
-
-| 섹션 | 분석 | 주요 기법 |
-|------|------|----------|
-| Multi-Touch 애트리뷰션 | 5모델 비교 (Last/First/Linear/Decay/Position) | Grouped Bar, Revenue Share |
-| 마케팅 퍼널 | CTR→CVR 병목 식별, CPA 비교 | Funnel Chart, Scatter |
-| 시계열 예측 | ARIMA(2,1,2) + Holt-Winters 30일 예측 | Line + 95% CI Band |
-
-**SQL 분석** — `MarketingROI_SQL_Analysis.ipynb` (27셀, 8개 쿼리)
-
-| # | 분석 | SQL 기법 |
-|---|------|----------|
-| 1 | 채널별 KPI 요약 | GROUP BY + 집계 함수 |
-| 2 | 일별 ROAS + 7일 이동평균 | AVG() OVER (ROWS BETWEEN) |
-| 3 | 캠페인별 랭킹 | RANK() OVER (PARTITION BY) |
-| 4 | 주중 vs 주말 비교 | CASE WHEN + EXTRACT(DOW) |
-| 5 | 월별 성과 트렌드 | DATE_TRUNC + GROUP BY |
-| 6 | 채널별 누적 매출 | SUM() OVER (ORDER BY) |
-| 7 | 이상치 탐지 | CTE + Z-score (STDDEV OVER) |
-| 8 | 예산 최적화 시뮬레이션 | 다단계 CTE + CROSS JOIN |
-
-### Tableau 대시보드
-
-Tableau Public으로 핵심 지표를 인터랙티브하게 시각화합니다. `analysis/data/` 폴더의 Tableau용 CSV 파일 3개를 사용합니다.
-
-> 배포 로드맵 + 상세 가이드: [`analysis/TABLEAU_GUIDE.md`](./analysis/TABLEAU_GUIDE.md)
-
-## Google Sheet 구조
-
-| Sheet | 용도 | 갱신 주기 |
-|-------|------|:---------:|
-| **Raw Data** | API에서 수집한 원본 광고 데이터 (append only) | 매일 9시 |
-| **Attribution** | 채널별 Spend / Revenue / ROAS 계산 결과 | 매일 9시 |
-| **Dashboard** | Total Spend, Revenue, Avg ROAS, 채널 비교 | 매일 9시 |
-| **Config** | Script Properties 설정 안내 | - |
-
-## 데이터 흐름
-
-```
-[Google Ads API] ────┐
-[Facebook Ads API] ──┤                                              ┌──→ Dashboard
-[Naver Search Ads] ──┘──→ Code.gs: main() ──→ Raw Data ──→ Attribution.gs
-                                │                               │   └──→ Funnel Analysis
-                                │                               │
-                                │                          Report.gs ──→ Anomaly Detection ──→ Slack
-                                │                               └──→ Weekly Report ──→ Slack
-                                └──→ Slack (에러 알림)
+```bash
+npm install -g @google/clasp
+clasp login
+clasp create --title "MarketingROI Tracker" --type sheets
+clasp push
 ```
 
-## Tests
+Apps Script 에디터에서 `setupAll` 실행 → 시트 4개 생성 + 테스트 데이터 + 트리거 설정 완료
 
-`Tests.gs`에 핵심 비즈니스 로직에 대한 단위 테스트 **30개**가 포함되어 있습니다.
-
-**실행**: Apps Script 에디터 → 함수 드롭다운 → `runAllTests` → 실행 (▶) → View → Logs
-
-| 테스트 그룹 | 테스트 수 | 검증 내용 |
-|-------------|:---------:|-----------|
-| parseNaverAdsResponse | 3 | Naver API 응답 → Raw Data 스키마 변환 |
-| isTimeLimitNear | 3 | 6분 실행 제한 체크 로직 |
-| getYesterday | 1 | 날짜 포맷 (yyyy-MM-dd) |
-| generateNaverSignature | 2 | HMAC-SHA256 서명 생성 |
-| Data Validation | 2 | 8컬럼 스키마 검증 |
-| Attribution Calculation | 4 | ROAS 계산, 0 나누기 방지, 다채널 집계 |
-| Prune Logic | 2 | 90일 초과 데이터 필터링 |
-| Time-Decay Weights | 2 | 지수 감쇠 가중치, 다채널 독립 계산 |
-| Multi-Touch Attribution | 3 | First-Touch, Linear, Position-Based |
-| Funnel Metrics | 3 | CTR, CVR, CPA 계산 및 0 나누기 방지 |
-| Anomaly Detection | 2 | Z-score 계산, 정상 데이터 미경보 |
-| Weekly Report | 3 | changeStr (+/- 표시), formatNum (콤마 포맷) |
-
-## CI/CD
-
-`.gs` 파일 변경 시 GitHub Actions가 자동 실행:
-
-- **구문 검사**: 모든 `.gs` 파일의 JavaScript 문법 검증
-- **시크릿 스캔**: API 키/토큰 하드코딩 여부 검사
-
-수동 실행: [Actions 탭](https://github.com/Taek-D/marketing-roi-tracker/actions) → "Run workflow"
-
-## 제약 사항
-
-| 항목 | 제한 | 대응 |
-|------|------|------|
-| Google Ads API | 일 15,000 쿼리 | 배치 처리 |
-| Facebook Ads API | 시간당 200 호출 | Rate Limit 대기 |
-| Naver Search Ads API | 초당 100건, 일 100,000건 | 여유로움 |
-| Apps Script 실행 | 최대 6분 | CONFIG.timeLimit = 300초 |
-| Google Sheets | 10K행 이상 느려짐 | 90일치만 보존 |
+> API 인증 가이드: [auth_setup_instructions.md](./auth_setup_instructions.md) | [naver_setup_guide.md](./naver_setup_guide.md)
 
 ## License
 
