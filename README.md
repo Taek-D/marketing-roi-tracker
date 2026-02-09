@@ -52,6 +52,8 @@
 | 3 | **Brand 캠페인이 전 채널 ROAS 1위** | ROAS 3.5~4.0, RANK() OVER 9개 캠페인 비교 | Brand 키워드 방어 예산 우선 확보 |
 | 4 | **어트리뷰션 모델별 매출 귀속 최대 30% 차이** | 5모델(Last/First/Linear/Decay/Position) 비교 | 복수 모델 교차 검증 도입 |
 | 5 | **블랙프라이데이 전 채널 ROAS 2~3배 급등** | Z-score 이상치 14건 탐지 (|Z|>2) | 시즌 이벤트 사전 예산 확보 |
+| 6 | **A/B 테스트(n=8) 검정력 부족 → 실험 설계 한계 진단** | ITT + Power Analysis, MDE 산출 | 최소 28일 테스트 + 사전 Power Analysis 필수 |
+| 7 | **시나리오 분석: Conservative에서도 하방 리스크 제한적** | 3시나리오 시뮬레이션 + Guard Rail 설정 | ROAS 하한 자동 모니터링 체계 구축 |
 
 > 상세 분석: [`analysis/report/executive_summary.md`](./analysis/report/executive_summary.md)
 
@@ -75,7 +77,7 @@
 
 ### 기본 분석 — [`MarketingROI_Analysis.ipynb`](./analysis/MarketingROI_Analysis.ipynb)
 
-> 가설 주도형 분석: EDA → 통계 검정 → 회귀 모델링 → 예산 최적화
+> 가설 주도형 분석: EDA → 통계 검정 → 회귀 모델링 → 예산 최적화 → 시나리오 분석
 
 | 단계 | 질문 | 방법 | 핵심 결과 |
 |------|------|------|----------|
@@ -83,6 +85,7 @@
 | 통계 검정 | 채널 간 차이가 우연인가? | ANOVA, 독립표본 t-test | 채널 간 유의 (p<0.001), 주중/주말 비유의 (p>0.05) |
 | 회귀 분석 | 광고비-매출 관계의 형태는? | 선형/로그/다항 R² + 5-Fold CV + 잔차 분석 | 체감수익 구조, 잔차 정규성 충족 |
 | 최적화 | 최적 예산 배분은? | ROAS 가중 시뮬레이션 | +4.3% 매출 증가 (약 ₩2,600만) |
+| 시나리오 | 나빠지면 어떻게 되는가? | Conservative/Base/Optimistic + Guard Rail | 하방 리스크 제한적, 자동 방어 기준 설정 |
 | 이상치 | 비정상 성과는 언제? | Z-score (|Z|>2) | 14건 탐지 (BF 급등, FB 추적 장애 급락) |
 
 ### 고급 분석 — [`MarketingROI_Advanced_Analysis.ipynb`](./analysis/MarketingROI_Advanced_Analysis.ipynb)
@@ -94,6 +97,7 @@
 | 멀티터치 어트리뷰션 5모델 | Last-Touch 의존 → 채널 기여 왜곡 | 모델 선택이 예산 배분을 최대 30% 변동시킴 |
 | 마케팅 퍼널 분석 | "왜 차이나는가?" 미답변 | Facebook은 CTR 병목 (3.94%), Naver는 CVR 개선 여지 |
 | ARIMA 시계열 예측 | 과거 해석만 수행 | ADF 정상성 확인 → ARIMA(2,1,2) 30일 예측 + 95% 신뢰구간 |
+| **A/B 테스트 분석** | 소재 변경 효과 미검증 | **n=8 검정력 부족 진단 → Power Analysis로 최소 28일 필요 산출** |
 
 ### SQL 분석 — [`MarketingROI_SQL_Analysis.ipynb`](./analysis/MarketingROI_SQL_Analysis.ipynb)
 
