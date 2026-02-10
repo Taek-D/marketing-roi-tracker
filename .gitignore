@@ -28,6 +28,7 @@ desktop.ini
 docs/.bkit-memory.json
 docs/.pdca-status.json
 docs/.pdca-snapshots/
+.claude/agent-memory/
 
 # Tableau workbook (CSV 데이터 + 가이드로 대체)
 *.twbx
