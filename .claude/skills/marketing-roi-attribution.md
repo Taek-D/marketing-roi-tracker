@@ -5,16 +5,33 @@ description: 마케팅 애트리뷰션 모델과 ROAS 계산. Use when working w
 
 # Attribution & Marketing Metrics
 
-## 현재 구현: Last-Touch
+## 구현 완료: Multi-Touch Attribution (5모델)
 
-모든 전환 크레딧을 마지막 접점 채널에 부여.
+Attribution.gs에 5가지 모델이 모두 구현되어 있음.
+
+| 모델 | 함수/로직 | 설명 |
+|------|-----------|------|
+| Last-Touch | `calculateAttribution()` 기본 | 마지막 접점에 100% 크레딧 |
+| First-Touch | `calculateAttribution()` | 첫 접점에 100% 크레딧 |
+| Linear | `calculateAttribution()` | 모든 접점에 균등 배분 |
+| Time-Decay | `calculateTimeDecayWeights()` | 지수 감쇠 (half-life 7일) |
+| Position-Based | `calculateAttribution()` | 첫/끝 40%, 중간 20% |
 
 ```javascript
 // Attribution.gs - calculateAttribution()
+// 5가지 모델 결과를 Attribution 시트에 기록
+// calculateTimeDecayWeights(): 지수 감쇠 가중치 계산
 stats[channel].spend += cost;    // row[3]
 stats[channel].revenue += revenue; // row[7]
 roas = revenue / spend;
 ```
+
+## 퍼널 분석 (구현 완료)
+
+Attribution.gs에 퍼널 메트릭도 포함:
+- Impressions → Clicks → Conversions → Revenue
+- CTR, CVR, CPA 자동 계산
+- Dashboard 시트에 요약 반영
 
 ## 핵심 지표
 
@@ -39,16 +56,8 @@ roas = revenue / spend;
 | 6 | conversions | number |
 | 7 | revenue | number |
 
-## 향후 확장 가능 모델
-
-| 모델 | 설명 | 복잡도 |
-|------|------|:------:|
-| First-Touch | 첫 접점에 100% 크레딧 | 낮음 |
-| Linear | 모든 접점에 균등 배분 | 중간 |
-| Time-Decay | 최근 접점에 가중치 | 중간 |
-| Position-Based | 첫/끝 40%, 중간 20% | 높음 |
-
 ## 주의사항
 - spend가 0일 때 ROAS 나누기 방지: `s.spend > 0 ? ... : 0`
 - parseFloat 실패 대비: `parseFloat(row[3]) || 0`
 - Attribution 시트는 매번 clearContents() 후 재계산
+- 통화 단위: KRW (원화) 통일

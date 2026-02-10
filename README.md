@@ -76,6 +76,14 @@
 
 ## 분석 노트북 (3개)
 
+> GitHub에서 렌더링이 느리면 nbviewer로 확인하세요.
+
+| 노트북 | nbviewer |
+|--------|----------|
+| 기본 분석 | [![nbviewer](https://img.shields.io/badge/render-nbviewer-orange)](https://nbviewer.org/github/Taek-D/marketing-roi-tracker/blob/master/analysis/MarketingROI_Analysis.ipynb) |
+| 고급 분석 | [![nbviewer](https://img.shields.io/badge/render-nbviewer-orange)](https://nbviewer.org/github/Taek-D/marketing-roi-tracker/blob/master/analysis/MarketingROI_Advanced_Analysis.ipynb) |
+| SQL 분석 | [![nbviewer](https://img.shields.io/badge/render-nbviewer-orange)](https://nbviewer.org/github/Taek-D/marketing-roi-tracker/blob/master/analysis/MarketingROI_SQL_Analysis.ipynb) |
+
 ### 기본 분석 — [`MarketingROI_Analysis.ipynb`](./analysis/MarketingROI_Analysis.ipynb)
 
 > 가설 주도형 분석: EDA → 통계 검정 → 회귀 모델링 → 예산 최적화 → 시나리오 분석

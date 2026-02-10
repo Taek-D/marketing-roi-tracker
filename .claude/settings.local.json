@@ -31,7 +31,9 @@
       "mcp__supabase__apply_migration",
       "mcp__supabase__execute_sql",
       "mcp__vercel__deploy_to_vercel",
-      "mcp__vercel__get_project"
+      "mcp__vercel__get_project",
+      "mcp__vercel__list_deployments",
+      "WebFetch(domain:nbviewer.org)"
     ],
     "deny": []
   },
@@ -42,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -c \"$(cat \"$CLAUDE_FILE_PATH\")\" 2>&1 || true"
+            "command": "case \"$CLAUDE_FILE_PATH\" in *.gs|*.md) ;; *) node -c \"$(cat \"$CLAUDE_FILE_PATH\")\" 2>&1 || true;; esac"
           }
         ]
       }

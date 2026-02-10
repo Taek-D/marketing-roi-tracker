@@ -70,6 +70,18 @@ Row index: 0=date, 1=channel, 2=campaign, 3=cost, 4=impressions, 5=clicks, 6=con
 - **generateNaverSignature()**: 네이버 API 서명 생성
 - **main()**: 전체 파이프라인 실행 (fetch 3채널 → append → attribute → dashboard → anomaly)
 
+## Testing
+- **테스트 실행**: GAS 에디터에서 `runAllTests()` 호출 (Tests.gs)
+- **테스트 수**: 30개 케이스 (단위 테스트)
+- **테스트 대상**: Attribution 계산, 이상치 탐지, 퍼널 메트릭, 설정 검증
+- **코드 수정 후**: 관련 테스트 통과 확인 필수
+
+## Commit Convention
+- **형식**: `type: 한글 설명`
+- **type**: feat, fix, refactor, docs, test, chore
+- **예시**: `feat: 네이버 검색광고 API 연동 추가`, `fix: ROAS 0 나누기 오류 수정`
+- **Co-Author**: `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>`
+
 ## 금지 사항
 - API 키/토큰을 코드에 직접 작성 금지
 - `console.log` 사용 금지 (GAS 환경에서 동작하지 않음)
